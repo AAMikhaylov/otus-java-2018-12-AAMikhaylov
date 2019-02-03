@@ -3,6 +3,11 @@ package ru.otus.l05;
 import static ru.otus.l05.MyJUnit.*;
 
 public class TriangleTest {
+    public static void main(String... args) {
+        runTesting(TriangleTest.class);
+
+    }
+
     private Triangle t;
 
     @BeforeEach

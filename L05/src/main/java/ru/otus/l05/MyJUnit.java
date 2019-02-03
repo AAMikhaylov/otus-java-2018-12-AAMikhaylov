@@ -5,10 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyJUnit {
-    public static void main(String... args) {
-        runTesting(TriangleTest.class);
-
-    }
 
     private static void runMethods(List<Method> mList, Object o) throws InvocationTargetException, IllegalAccessException {
         for (Method m : mList)
