@@ -2,12 +2,13 @@ package ru.otus.l07;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 
 class Dispenser {
-    private final ArrayList<Cassette> cassettes;
-    private final byte maxCasseteCount = 4;
+    private final List<Cassette> cassettes;
+    private static final byte maxCasseteCount = 4;
 
     Dispenser() {
         cassettes = new ArrayList<>(Collections.nCopies(maxCasseteCount, null));
@@ -21,12 +22,15 @@ class Dispenser {
             System.out.println("Невозможно загрузить  кассету номиналом " + cst.getNominal() + " Отсутствует ячейка с номером " + num + " в диспенсере!");
     }
 
-    void unloadCassette(byte num) {
-        Cassette cst = cassettes.get(num);
-        if (cst != null) {
-            System.out.println("Извлечена кассета номиналом " + cst.getNominal() + ", количество оставшихся купюр - " + cst.getRemain());
-            cassettes.set(num, null);
-        }
+    void unloadCassette(int num) {
+        if (num >= 0 && num < maxCasseteCount) {
+            Cassette cst = cassettes.get(num);
+            if (cst != null) {
+                System.out.println("Извлечена кассета номиналом " + cst.getNominal() + ", количество оставшихся купюр - " + cst.getRemain());
+                cassettes.set(num, null);
+            }
+        } else
+            System.out.println("Кассета не может быть извлечена. Отсутсвует ячейка с номером " + num);
     }
 
     void cashIn(Map<Nominals, Integer> banknotes) {
@@ -121,7 +125,7 @@ class Dispenser {
 
     void unloadAllCassettes() {
 
-        for (byte i = 0; i < maxCasseteCount; i++) {
+        for (int i = 0; i < maxCasseteCount; i++) {
             unloadCassette(i);
         }
     }

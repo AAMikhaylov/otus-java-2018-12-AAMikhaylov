@@ -11,6 +11,7 @@ public class Main {
         atm.addCassette(Nominals.n100, 1000, 1);
         atm.addCassette(Nominals.n1000, 1000, 2);
         atm.addCassette(Nominals.n5000, 1, 3);
+        atm.cashOut(52050);
         atm.addCassette(Nominals.n5000, 1, 4);
         atm.endIncass();
         atm.cashOut(52050);
@@ -22,6 +23,6 @@ public class Main {
         banknotes.put(Nominals.n200, 50);
         banknotes.put(Nominals.n1000, 10);
         atm.cashIn(banknotes);
-        atm.getBalance();
+        atm.printBalance();
     }
 }

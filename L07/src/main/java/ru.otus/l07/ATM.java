@@ -42,7 +42,8 @@ public class ATM {
             System.out.println("\r\nОперация: выдача наличных.");
             System.out.println("--------------------------------------------------------");
             dispenser.dispense(amount);
-        }
+        } else
+            System.out.println("\r\nОперация \"выдача наличных\" не может быть выполнена! Банкомат на обслуживании.\r\n");
 
     }
 
@@ -51,13 +52,18 @@ public class ATM {
             System.out.println("\r\nОперация: прием наличных.");
             System.out.print("--------------------------------------------------------");
             dispenser.cashIn(banknotes);
-        }
+        } else
+            System.out.println("\r\nОперация \"прием наличных\" не может быть выполнена! Банкомат на обслуживании.\r\n");
+
     }
 
-    public void getBalance() {
-        System.out.println("\r\nОперация: запрос баланса.");
-        System.out.println("--------------------------------------------------------");
-        dispenser.printBalance();
+    public void printBalance() {
+        if (!inService) {
+            System.out.println("\r\nОперация: запрос баланса.");
+            System.out.println("--------------------------------------------------------");
+            dispenser.printBalance();
+        } else
+            System.out.println("\r\nОперация \"запрос баланса\" не может быть выполнена! Банкомат на обслуживании.\r\n");
 
 
     }

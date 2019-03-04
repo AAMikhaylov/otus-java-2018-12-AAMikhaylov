@@ -14,7 +14,6 @@ class Cassette {
         return nominal;
     }
 
-
     void dispense() {
         remainCount = remainCount - prepareCount;
         prepareCount = 0;
