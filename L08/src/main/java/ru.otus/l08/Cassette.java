@@ -4,6 +4,7 @@ class Cassette {
     private final Nominals nominal;
     private int remainCount;
     private int prepareCount;
+    private CassetteMemento firstState;
 
     Cassette(Nominals nominal, int count) {
         this.nominal = nominal;
@@ -37,5 +38,16 @@ class Cassette {
         this.prepareCount = prepareCount;
 
     }
+
+    public void save() {
+        firstState = new CassetteMemento(remainCount);
+    }
+
+    public void restore() {
+        if (firstState != null) {
+            remainCount = firstState.getRemainCount();
+        }
+    }
+
 
 }

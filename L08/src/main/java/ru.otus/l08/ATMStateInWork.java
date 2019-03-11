@@ -1,12 +1,6 @@
 package ru.otus.l08;
 
-public class InWorkATMState implements ATMState {
-    private ATMStates name = ATMStates.InWork;
-
-    @Override
-    public ATMStates getName() {
-        return name;
-    }
+public class ATMStateInWork implements ATMState {
 
     @Override
     public boolean canCollection() {
@@ -22,7 +16,6 @@ public class InWorkATMState implements ATMState {
     public boolean canCashIn() {
         return true;
     }
-
 
 
     @Override

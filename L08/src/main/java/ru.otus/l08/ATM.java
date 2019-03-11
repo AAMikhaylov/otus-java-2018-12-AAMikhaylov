@@ -3,11 +3,11 @@ package ru.otus.l08;
 import java.util.Map;
 
 public class ATM implements DepCommands {
-    private Dispenser dispenser;
+    private final Dispenser dispenser;
     private String address;
     private String atmName;
     private ATMState state;
-    private MementoATM StartATMState;
+    private AtmMemento firstState;
 
 
     public ATM(String atmName, String address, ATMState state) {
@@ -15,13 +15,7 @@ public class ATM implements DepCommands {
         this.atmName = atmName;
         this.address = address;
         this.state = state;
-        StartATMState = new MementoATM(state, address, atmName);
-    }
-
-    private void restoreMemento(MementoATM m) {
-        this.state = m.getAtmState();
-        this.atmName = m.getAtmName();
-        this.address = m.getAddress();
+        firstState = new AtmMemento(this, dispenser);
 
     }
 
@@ -34,8 +28,9 @@ public class ATM implements DepCommands {
             dispenser.unloadAllCassettes();
             for (int i = 0; i < cst.length; i++)
                 dispenser.loadCassette(cst[i], i);
-            state = new InWorkATMState();
+            state = new ATMStateInWork();
             System.out.println("Инкассация завершена.");
+            firstState = new AtmMemento(this, dispenser);
         }
     }
 
@@ -46,7 +41,7 @@ public class ATM implements DepCommands {
         if (state.canCashOut()) {
             dispenser.dispense(amount);
             if (getBalance() == 0)
-                state = new NoMoneyATMState();
+                state = new ATMStateNoMoney();
         }
 
     }
@@ -56,8 +51,8 @@ public class ATM implements DepCommands {
         System.out.print("--------------------------------------------------------");
         if (state.canCashIn()) {
             dispenser.cashIn(banknotes);
-            if (getBalance() != 0 && state.getName() == ATMStates.NoMoney)
-                state = new InWorkATMState();
+            if (getBalance() != 0 && state.getClass() == ATMStateNoMoney.class)
+                state = new ATMStateInWork();
         }
 
     }
@@ -72,19 +67,24 @@ public class ATM implements DepCommands {
         System.out.println("--------------------------------------------------------");
         System.out.println("Успешно.");
 
-        state = new InWorkATMState();
+        state = new ATMStateInWork();
     }
 
     public void destroy() {
 
         System.out.println(toString() + " сломался.");
-        state = new HardwareErrorATMState();
+        state = new ATMStateHardwareError();
     }
 
 
     @Override
     public void restoreFirstState() {
-        restoreMemento(StartATMState);
+        if (firstState != null) {
+            this.state = firstState.getAtmState();
+            this.atmName = firstState.getAtmName();
+            this.address = firstState.getAddress();
+            dispenser.restore();
+        }
     }
 
     public int getBalance() {
@@ -93,7 +93,7 @@ public class ATM implements DepCommands {
 
     public void printBalance() {
 
-        System.out.println("\r\nОперация: печать баланса. "+toString());
+        System.out.println("\r\nОперация: печать баланса. " + toString());
         System.out.println("--------------------------------------------------------");
         if (state.canPrintBalance())
             dispenser.printBalance();
@@ -114,6 +114,10 @@ public class ATM implements DepCommands {
 
     public String getAtmName() {
         return atmName;
+    }
+
+    public ATMState getState() {
+        return state;
     }
 
     @Override

@@ -1,12 +1,6 @@
 package ru.otus.l08;
 
-public class NoMoneyATMState implements ATMState {
-    private ATMStates name = ATMStates.NoMoney;
-
-    @Override
-    public ATMStates getName() {
-        return name;
-    }
+public class ATMStateNoMoney implements ATMState {
 
     @Override
     public boolean canCollection() {

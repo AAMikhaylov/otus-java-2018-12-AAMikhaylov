@@ -1,11 +1,6 @@
 package ru.otus.l08;
 
-public class HardwareErrorATMState implements ATMState {
-    private ATMStates name = ATMStates.HardwareError;
-    @Override
-    public ATMStates getName() {
-        return name;
-    }
+public class ATMStateHardwareError implements ATMState {
 
     @Override
     public boolean canCollection() {
@@ -24,8 +19,6 @@ public class HardwareErrorATMState implements ATMState {
         System.out.println("Прием наличных невозможен. Банкомат неисправен!");
         return false;
     }
-
-
 
     @Override
     public boolean canPrintBalance() {

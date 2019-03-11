@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ATMDepartment {
-    private List<DepCommands> ATMList;
+    private List<DepCommands> atms;
     private int depatmentBal;
 
     public ATMDepartment() {
-        this.ATMList = new ArrayList<>();
+        this.atms = new ArrayList<>();
     }
 
     public void addATM(ATM atm) {
-        ATMList.add(atm);
+        atms.add(atm);
 
     }
 
@@ -24,7 +24,7 @@ public class ATMDepartment {
         System.out.println("\r\nОперация: запрос баланса банкоматов по департаменту.");
         System.out.println("--------------------------------------------------------");
         depatmentBal = 0;
-        for (DepCommands atm : ATMList) {
+        for (DepCommands atm : atms) {
             atm.sendBalance(this);
         }
         System.out.println("Баланс денежных средств по департаменту составляет: "+depatmentBal+"руб.");
@@ -32,7 +32,7 @@ public class ATMDepartment {
     public void resetATMState() {
         System.out.println("\r\nОперация: сброс состояний банкоматов к первоначальному.");
         System.out.println("--------------------------------------------------------");
-        for (DepCommands atm : ATMList) {
+        for (DepCommands atm : atms) {
             atm.restoreFirstState();
         }
         System.out.println("Завершено.");
@@ -40,8 +40,8 @@ public class ATMDepartment {
 
 
     public void removeATM(int i) {
-        if (i < ATMList.size())
-            ATMList.remove(i);
+        if (i < atms.size())
+            atms.remove(i);
     }
 
 

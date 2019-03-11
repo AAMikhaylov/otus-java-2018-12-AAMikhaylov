@@ -10,7 +10,4 @@ public interface ATMState {
 
     boolean canPrintBalance();
 
-    ATMStates getName();
-
-
 }

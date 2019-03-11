@@ -8,22 +8,23 @@ import java.util.Map;
 
 class Dispenser {
     private final List<Cassette> cassettes;
-    private static final byte maxCasseteCount = 4;
+    private static final byte MAX_CASSETE_COUNT = 4;
+    private DispenserMemento firstState;
 
     Dispenser() {
-        cassettes = new ArrayList<>(Collections.nCopies(maxCasseteCount, null));
+        cassettes = new ArrayList<>(Collections.nCopies(MAX_CASSETE_COUNT, null));
     }
 
     void loadCassette(Cassette cst, int num) {
-        if (num >= 0 && num < maxCasseteCount) {
+        if (num >= 0 && num < MAX_CASSETE_COUNT) {
             cassettes.set(num, cst);
             System.out.println("Загружена кассета номиналом " + cst.getNominal() + ", количество купюр - " + cst.getRemain());
         } else
             System.out.println("Невозможно загрузить  кассету номиналом " + cst.getNominal() + " Отсутствует ячейка с номером " + num + " в диспенсере!");
     }
 
-    void unloadCassette(int num) {
-        if (num >= 0 && num < maxCasseteCount) {
+    private void unloadCassette(int num) {
+        if (num >= 0 && num < MAX_CASSETE_COUNT) {
             Cassette cst = cassettes.get(num);
             if (cst != null) {
                 System.out.println("Извлечена кассета номиналом " + cst.getNominal() + ", количество оставшихся купюр - " + cst.getRemain());
@@ -83,13 +84,11 @@ class Dispenser {
         int sum = 0;
         for (Cassette cst : cassettes)
             sum = sum + cst.getPrepareCount() * cst.getNominal().getValue();
-        if (sum != amount)
-            return false;
-        return true;
+        return (sum == amount);
 
     }
 
-    boolean dispense(int amount) {
+    void dispense(int amount) {
         System.out.println("Набор купюр на сумму " + amount + "руб.");
         if (prepareDispense(amount)) {
             for (Cassette cst : cassettes) {
@@ -99,14 +98,12 @@ class Dispenser {
                 }
 
             }
-            return true;
         }
         System.out.println("Невозможно выдать сумму " + amount + "руб. В банкомате доступны купюры номиналом: " + getNominalList());
         resetPrepare();
-        return false;
     }
 
-    public int getBalance() {
+    int getBalance() {
         int bal = 0;
         for (int i = 0; i < cassettes.size(); i++) {
             Cassette cst = cassettes.get(i);
@@ -116,7 +113,21 @@ class Dispenser {
         return bal;
     }
 
-    public void printBalance() {
+    public void save() {
+        firstState = new DispenserMemento(cassettes);
+    }
+
+    public void restore() {
+        if (firstState != null) {
+            Collections.copy(cassettes, firstState.getCassettes());
+            cassettes.forEach(cst -> {
+                if (cst != null)
+                    cst.restore();
+            });
+        }
+    }
+
+    void printBalance() {
         int bal = 0;
 
         for (int i = 0; i < cassettes.size(); i++) {
@@ -135,12 +146,12 @@ class Dispenser {
 
     void unloadAllCassettes() {
 
-        for (int i = 0; i < maxCasseteCount; i++) {
+        for (int i = 0; i < MAX_CASSETE_COUNT; i++) {
             unloadCassette(i);
         }
     }
 
-    String getNominalList() {
+    private String getNominalList() {
         StringBuilder st = new StringBuilder();
         for (Cassette cst : cassettes) {
             if (cst != null)
