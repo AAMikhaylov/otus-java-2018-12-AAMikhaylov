@@ -6,7 +6,7 @@ public class AtmMemento {
     private final String atmName;
 
     public AtmMemento(ATM atm, Dispenser dispenser) {
-        this.atmState = atm.getState();
+        this.atmState = atm.getAtmState();
         this.address = atm.getAddress();
         this.atmName = atm.getAtmName();
         dispenser.save();

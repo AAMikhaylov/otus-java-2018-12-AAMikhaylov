@@ -28,15 +28,12 @@ class Cassette {
         return remainCount;
     }
 
-
     int getPrepareCount() {
         return prepareCount;
     }
 
-
     void setPrepareCount(int prepareCount) {
         this.prepareCount = prepareCount;
-
     }
 
     public void save() {

@@ -6,99 +6,85 @@ public class ATM implements DepCommands {
     private final Dispenser dispenser;
     private String address;
     private String atmName;
-    private ATMState state;
+    private ATMState atmState;
     private AtmMemento firstState;
 
-
-    public ATM(String atmName, String address, ATMState state) {
+    public ATM(String atmName, String address, ATMState atmState) {
         dispenser = new Dispenser();
         this.atmName = atmName;
         this.address = address;
-        this.state = state;
+        this.atmState = atmState;
         firstState = new AtmMemento(this, dispenser);
-
     }
 
-
     public void collection(Cassette... cst) {
-
-        System.out.println("\r\nИнкассация. " + toString());
+        System.out.println("\r\nИнкассация. " + this);
         System.out.println("--------------------------------------------------------");
-        if (state.canCollection()) {
+        if (atmState.canCollection()) {
             dispenser.unloadAllCassettes();
             for (int i = 0; i < cst.length; i++)
                 dispenser.loadCassette(cst[i], i);
-            state = new ATMStateInWork();
+            atmState = new ATMStateInWork();
             System.out.println("Инкассация завершена.");
             firstState = new AtmMemento(this, dispenser);
         }
     }
 
-
     public void cashOut(int amount) {
-        System.out.println("\r\nОперация: выдача наличных. " + toString());
+        System.out.println("\r\nОперация: выдача наличных. " + this);
         System.out.println("--------------------------------------------------------");
-        if (state.canCashOut()) {
+        if (atmState.canCashOut()) {
             dispenser.dispense(amount);
             if (getBalance() == 0)
-                state = new ATMStateNoMoney();
+                atmState = new ATMStateNoMoney();
         }
-
     }
 
     public void cashIn(Map<Nominals, Integer> banknotes) {
-        System.out.println("\r\nОперация: прием наличных. " + toString());
+        System.out.println("\r\nОперация: прием наличных. " + this);
         System.out.print("--------------------------------------------------------");
-        if (state.canCashIn()) {
+        if (atmState.canCashIn()) {
             dispenser.cashIn(banknotes);
-            if (getBalance() != 0 && state.getClass() == ATMStateNoMoney.class)
-                state = new ATMStateInWork();
+            if (getBalance() != 0 && atmState.getClass() == ATMStateNoMoney.class)
+                atmState = new ATMStateInWork();
         }
 
     }
 
-    @Override
-    public void sendBalance(ATMDepartment department) {
-        department.addATMBal(getBalance());
-    }
-
     public void repair() {
-        System.out.println("\r\nОперация: ремонт. " + toString());
+        System.out.println("\r\nОперация: ремонт. " + this);
         System.out.println("--------------------------------------------------------");
         System.out.println("Успешно.");
-
-        state = new ATMStateInWork();
+        atmState = new ATMStateInWork();
     }
 
     public void destroy() {
-
-        System.out.println(toString() + " сломался.");
-        state = new ATMStateHardwareError();
+        System.out.println(this + " сломался.");
+        atmState = new ATMStateHardwareError();
     }
 
 
     @Override
     public void restoreFirstState() {
         if (firstState != null) {
-            this.state = firstState.getAtmState();
+            this.atmState = firstState.getAtmState();
             this.atmName = firstState.getAtmName();
             this.address = firstState.getAddress();
             dispenser.restore();
         }
     }
 
+    @Override
     public int getBalance() {
         return dispenser.getBalance();
     }
 
     public void printBalance() {
-
-        System.out.println("\r\nОперация: печать баланса. " + toString());
+        System.out.println("\r\nОперация: печать баланса. " + this);
         System.out.println("--------------------------------------------------------");
-        if (state.canPrintBalance())
+        if (atmState.canPrintBalance())
             dispenser.printBalance();
     }
-
 
     public void setAddress(String address) {
         this.address = address;
@@ -116,8 +102,8 @@ public class ATM implements DepCommands {
         return atmName;
     }
 
-    public ATMState getState() {
-        return state;
+    public ATMState getAtmState() {
+        return atmState;
     }
 
     @Override

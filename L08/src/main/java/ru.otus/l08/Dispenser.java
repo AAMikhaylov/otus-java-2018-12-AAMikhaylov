@@ -80,12 +80,10 @@ class Dispenser {
                     remain = remain - cst.getNominal().getValue() * prepareCount;
                 }
             }
-
         int sum = 0;
         for (Cassette cst : cassettes)
             sum = sum + cst.getPrepareCount() * cst.getNominal().getValue();
         return (sum == amount);
-
     }
 
     void dispense(int amount) {
@@ -98,9 +96,10 @@ class Dispenser {
                 }
 
             }
+        } else {
+            System.out.println("Невозможно выдать сумму " + amount + "руб. В банкомате доступны купюры номиналом: " + getNominalList());
+            resetPrepare();
         }
-        System.out.println("Невозможно выдать сумму " + amount + "руб. В банкомате доступны купюры номиналом: " + getNominalList());
-        resetPrepare();
     }
 
     int getBalance() {
@@ -129,14 +128,12 @@ class Dispenser {
 
     void printBalance() {
         int bal = 0;
-
         for (int i = 0; i < cassettes.size(); i++) {
             Cassette cst = cassettes.get(i);
             System.out.println("Кассета: " + (i + 1) + ", номинал: " + cst.getNominal() + ", количество банкнот: " + cst.getRemain() + "шт., сумма: " + cst.getRemain() * cst.getNominal().getValue() + "руб.");
             bal = bal + cst.getRemain() * cst.getNominal().getValue();
         }
         System.out.println("Итого: " + bal + "руб.");
-
     }
 
     private void resetPrepare() {
@@ -145,7 +142,6 @@ class Dispenser {
     }
 
     void unloadAllCassettes() {
-
         for (int i = 0; i < MAX_CASSETE_COUNT; i++) {
             unloadCassette(i);
         }

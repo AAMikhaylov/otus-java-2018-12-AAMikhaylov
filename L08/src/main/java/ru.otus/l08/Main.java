@@ -5,8 +5,7 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
-
-        ATMDepartment department=new ATMDepartment();
+        ATMDepartment department = new ATMDepartment();
         ATM atm1 = new ATM("Банкомат на Ленинском проспекте", "Ленинский проспект, 11", new ATMStateNoMoney());
         department.addATM(atm1);
         atm1.collection(new Cassette[]{new Cassette(Nominals.n50, 1000), new Cassette(Nominals.n100, 1000), new Cassette(Nominals.n500, 1000), new Cassette(Nominals.n1000, 1000)});
@@ -19,10 +18,10 @@ public class Main {
         banknotes.put(Nominals.n1000, 10);
         atm1.cashIn(banknotes);
         atm1.printBalance();
-        ATM atm2=new ATM("Банкомат на Энтузиастов","Энтузиастов, 22", new ATMStateNoMoney());
+        ATM atm2 = new ATM("Банкомат на Энтузиастов", "Энтузиастов, 22", new ATMStateNoMoney());
         atm2.collection(new Cassette[]{new Cassette(Nominals.n50, 1000), new Cassette(Nominals.n100, 1000), new Cassette(Nominals.n500, 1000), new Cassette(Nominals.n1000, 1000)});
         department.addATM(atm2);
-        ATM atm3=new ATM("Банкомат на Энтузиастов","Энтузиастов, 1", new ATMStateInWork());
+        ATM atm3 = new ATM("Банкомат на Энтузиастов", "Энтузиастов, 1", new ATMStateInWork());
         atm3.collection(new Cassette[]{new Cassette(Nominals.n50, 1000), new Cassette(Nominals.n100, 1000), new Cassette(Nominals.n500, 1000), new Cassette(Nominals.n1000, 1000)});
         department.addATM(atm3);
         department.getBalance();
@@ -43,5 +42,6 @@ public class Main {
         atm1.cashOut(100);
         atm2.cashOut(1000);
         atm3.cashOut(5000);
+        atm3.printBalance();
     }
 }
