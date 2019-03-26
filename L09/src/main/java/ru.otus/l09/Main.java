@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+
 import java.io.OutputStream;
 
 public class Main {
@@ -17,6 +17,6 @@ public class Main {
         }
 
         Gson gson = new Gson();
-        System.out.println(gson.toJson(t));
+        System.out.println("gson="+gson.toJson(t));
     }
 }
