@@ -56,11 +56,16 @@ public class TestObject {
         testArr3 = new Integer[]{1, 2, 3, 4, 56};
         collect1.add(10);
         collect1.add(11);
-        collect2.add(new User());
-        collect2.add(new User());
+
+        collect2.add(new User("Alex"));
+        collect2.add(null);
+        u = new User("Kruger");
+        u.friend=new User("friend Kruger");
+        collect2.add(u);
         test10 = new int[]{1,2};
         collect3=Collections.singletonList("1");
-        u = new User();
+        u = new User("Andrew");
+        u.friend=new User("friend Andrew");
         s.add("String 1");
         s.add("String 2");
         test11 = 1;

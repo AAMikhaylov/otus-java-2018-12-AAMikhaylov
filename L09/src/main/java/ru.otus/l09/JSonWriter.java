@@ -1,6 +1,7 @@
 package ru.otus.l09;
 
 import javax.json.*;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -16,81 +17,75 @@ public class JSonWriter {
         this.os = os;
     }
 
-    private void addJsonCollection(JsonObjectBuilder buildingJsonObject, Object collectObject, String fieldName) {
+    private JsonValue getJsonForCollection(Object collectObject) {
         Collection<?> collection = (Collection) collectObject;
-        if (collection.size() > 0) {
-            JsonArrayBuilder jsonArray = Json.createArrayBuilder();
+        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
+        if (collectObject != null) {
             Iterator<?> itr = collection.iterator();
             while (itr.hasNext()) {
                 Object collectElm = itr.next();
-                if (collectElm != null) {
-                    if (Helper.isWrapper(collectElm.getClass()) || Helper.isString(collectElm.getClass())) {
-                        JsonValue jv = Helper.getJsonValue(collectElm);
-                        if (jv != null)
-                            jsonArray.add(jv);
-                    } else jsonArray.add(jsonBuild(collectElm));
-                }
+                if (collectElm == null)
+                    jsonArray.add(JsonValue.NULL);
+                else
+                    jsonArray.add(getJson(collectElm));
             }
-            buildingJsonObject.add(fieldName, jsonArray);
         }
+        return jsonArray.build();
     }
 
-    private void addJsonArray(JsonObjectBuilder buildingJsonObject, Object array, String fieldName) {
-        if (Array.getLength(array) > 0) {
-            JsonArrayBuilder jsonArray = Json.createArrayBuilder();
+    private JsonValue getJsonForArray(Object array) {
+        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
+        if (array != null) {
             for (int i = 0; i < Array.getLength(array); i++) {
                 Object arrayElm = Array.get(array, i);
-                if (arrayElm != null) {
-                    if (Helper.isWrapper(arrayElm.getClass()) || Helper.isString(arrayElm.getClass())) {
-                        JsonValue jv = Helper.getJsonValue(arrayElm);
-                        if (jv != null)
-                            jsonArray.add(jv);
-                    } else jsonArray.add(jsonBuild(arrayElm));
-                }
+                if (arrayElm == null)
+                    jsonArray.add(JsonValue.NULL);
+                else
+                    jsonArray.add(getJson(arrayElm));
             }
-            buildingJsonObject.add(fieldName, jsonArray);
         }
+        return jsonArray.build();
     }
 
-    private void addJsonElement(JsonObjectBuilder buildingJsonObject, Object object, String fieldName) {
-        if (Helper.isString(object.getClass()) || Helper.isWrapper(object.getClass())) {
-            JsonValue jv;
-            jv = Helper.getJsonValue(object);
-            if (jv != null)
-                buildingJsonObject.add(fieldName, jv);
-        } else if (object.getClass().isArray())
-            addJsonArray(buildingJsonObject, object, fieldName);
-        else if (Helper.isCollection(object.getClass()))
-            addJsonCollection(buildingJsonObject, object, fieldName);
-        else {
-            buildingJsonObject.add(fieldName, jsonBuild(object));
-        }
-    }
-
-    JsonObjectBuilder jsonBuild(Object object) {
-        if (object == null) return null;
+    private JsonValue getJsonForObject(Object object) {
         JsonObjectBuilder buildingObject = Json.createObjectBuilder();
         Field[] fields = object.getClass().getDeclaredFields();
         try {
             for (Field f : fields) {
                 f.setAccessible(true);
-                if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers()) && f.get(object) != null) {
-                    addJsonElement(buildingObject, f.get(object), f.getName());
+                if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers())) {
+                    if (f.get(object) != null)
+                        buildingObject.add(f.getName(), getJson(f.get(object)));
                 }
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
-        return buildingObject;
+        return buildingObject.build();
     }
 
-    public void writeObject(Object obj) {
-        JsonObjectBuilder buildingObject = jsonBuild(obj);
-        JsonObject jo = buildingObject.build();
-        JsonWriter jw = Json.createWriter(os);
-        System.out.println("json=" + jo);
-        jw.writeObject(jo);
+    JsonValue getJson(Object object) {
+        if (object == null)
+            return JsonValue.NULL;
+        if (Helper.isString(object.getClass()))
+            return Json.createValue(object.toString());
+        if (Helper.isWrapper(object.getClass()))
+            return Helper.getJsonValue(object);
+        if (object.getClass().isArray())
+            return getJsonForArray(object);
+        if (Helper.isCollection(object.getClass()))
+            return getJsonForCollection(object);
+        return getJsonForObject(object);
     }
 
+    public void writeObject(Object object) {
+        String jsonString = getJson(object).toString();
+        try {
+            os.write(jsonString.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
+
