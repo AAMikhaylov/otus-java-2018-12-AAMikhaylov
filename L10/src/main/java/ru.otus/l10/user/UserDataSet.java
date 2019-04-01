@@ -13,9 +13,6 @@ public class UserDataSet extends DataSet {
 
     }
 
-    public long getId() {
-        return id;
-    }
 
     public String getName() {
         return name;
@@ -25,10 +22,18 @@ public class UserDataSet extends DataSet {
         return age;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
     @Override
     public String toString() {
         return "UserDataSet{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", name=\"" + name +
                 "\", age=" + age +
                 '}';

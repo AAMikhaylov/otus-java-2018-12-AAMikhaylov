@@ -3,13 +3,10 @@ package ru.otus.l10.user;
 import ru.otus.l10.dbcommon.DBHelper;
 import ru.otus.l10.executors.Executor;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class UserExecutorDAO implements UserDAO {
     private final Connection connection;
@@ -22,8 +19,8 @@ public class UserExecutorDAO implements UserDAO {
         if (resultSet.next())
             try {
                 T user = userClass.getConstructor().newInstance();
-                DBHelper.initObjectFields(user,userClass,resultSet);
-                DBHelper.initObjectFields(user,userClass.getSuperclass(),resultSet);
+                DBHelper.initJavaObjectFields(user, userClass, resultSet);
+                DBHelper.initJavaObjectFields(user, userClass.getSuperclass(), resultSet);
                 return user;
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
@@ -38,21 +35,33 @@ public class UserExecutorDAO implements UserDAO {
     }
 
 
+    private <T extends DataSet> boolean isExists(T user) throws SQLException {
+        String queryCount = DBHelper.dbSelectCountQuery(user.getClass(), "id=" + user.getId());
+        Integer cnt = Executor.query(connection, queryCount, ((resultSet) -> {
+            resultSet.next();
+            return resultSet.getInt("cnt");
+        }));
+        if (cnt == 0)
+            return false;
+        else
+            return true;
+    }
+
     @Override
     public <T extends DataSet> void save(T user) throws SQLException {
-        StringBuilder SQLQuery = new StringBuilder("insert into " + DBHelper.getDbTableName(user.getClass()));
-        SQLQuery.append("(" + DBHelper.getFields(user.getClass()) + ") values (");
-        SQLQuery.append(DBHelper.getFieldValues(user));
-        SQLQuery.append(");");
-        Executor.update(connection, SQLQuery.toString());
+        String querySave = "";
+        if (user.getId() == 0 || !isExists(user))
+            querySave = DBHelper.dbInsertQuery(user);
+        else
+            querySave = DBHelper.dbUpdateQuery(user, user.getId());
+        Executor.update(connection, querySave);
     }
 
     @Override
-    public <T extends DataSet> T load(long id, Class<T> cls) throws SQLException {
-        String SQLQuery = "select * from " + DBHelper.getDbTableName(cls) + " where id=" + id;
-        return Executor.query(connection, SQLQuery, ((resultSet) -> {
-            return createUser(resultSet, cls);
+    public <T extends DataSet> T load(long id, Class<T> userClass) throws SQLException {
+        String querySelect = DBHelper.dbSelectQuery(userClass, "id=" + id);
+        return Executor.query(connection, querySelect, ((resultSet) -> {
+            return createUser(resultSet, userClass);
         }));
     }
-
 }
