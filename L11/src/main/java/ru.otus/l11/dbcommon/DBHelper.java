@@ -54,24 +54,6 @@ public class DBHelper {
             return result + " where " + filter + ";";
     }
 
-
-    public static String dbDropQuery(Class<?> javaClass) {
-        return "drop table if exists " + DBHelper.dbTableName(javaClass) + ";";
-    }
-
-    public static String dbCreateQuery(Class<?> javaClass) {
-        StringBuilder result = new StringBuilder("create table if not exists " + dbTableName(javaClass) + " ");
-        result.append("(id  bigint(20) not null primary key auto_increment");
-        Field[] fields = javaClass.getDeclaredFields();
-        for (Field f : fields) {
-            f.setAccessible(true);
-            if (isForDbField(f))
-                result.append(",  " + DBHelper.dbCreateColumnClause(f.getName(), f.getType()));
-        }
-        result.append(");");
-        return result.toString();
-    }
-
     public static String dbInsertQuery(Object javaObject) {
         return "insert into " + dbTableName(javaObject.getClass()) + " " +
                 dbInsertFieldList(javaObject.getClass()) + " " +
@@ -112,7 +94,7 @@ public class DBHelper {
         return result.toString();
     }
 
-    private static boolean isForDbField(Field field) {
+    public static boolean isForDbField(Field field) {
         if (!Modifier.isStatic(field.getModifiers()) && (field.getType().isPrimitive() || field.getType() == String.class))
             return true;
         return false;
@@ -129,7 +111,7 @@ public class DBHelper {
     }
 
 
-    private static String dbTableName(Class<?> cls) {
+    public static String dbTableName(Class<?> cls) {
         String dbTableName = cls.getName().replace(cls.getPackageName() + ".", "");
         return dbTableName.replace("DataSet", "");
     }
@@ -153,27 +135,4 @@ public class DBHelper {
                 e.printStackTrace();
             }
     }
-
-    private static String dbCreateColumnClause(String fieldName, Class<?> fieldClass) {
-        if (fieldClass == byte.class)
-            return fieldName + "  TINYINT";
-        if (fieldClass == boolean.class)
-            return fieldName + "  BOOL";
-        if (fieldClass == short.class)
-            return fieldName + "  SMALLINT";
-        if (fieldClass == char.class)
-            return fieldName + "  CHAR";
-        if (fieldClass == int.class)
-            return fieldName + "  INTEGER";
-        if (fieldClass == float.class)
-            return fieldName + "  FLOAT";
-        if (fieldClass == long.class)
-            return fieldName + "  BIGINT";
-        if (fieldClass == double.class)
-            return fieldName + "  DOUBLE";
-        if (fieldClass == String.class)
-            return fieldName + "  VARCHAR(255)";
-        return null;
-    }
-
 }

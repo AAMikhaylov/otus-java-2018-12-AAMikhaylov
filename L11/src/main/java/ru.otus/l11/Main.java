@@ -1,5 +1,7 @@
 package ru.otus.l11;
 
+import net.bytebuddy.matcher.AccessibilityMatcher;
+import org.hibernate.cfg.Configuration;
 import ru.otus.l11.base.DBService;
 import ru.otus.l11.base.dataSets.AddressDataSet;
 import ru.otus.l11.base.dataSets.PhoneDataSet;
@@ -8,6 +10,7 @@ import ru.otus.l11.dbService.DBServiceImpl;
 import ru.otus.l11.dbcommon.DBHelper;
 import ru.otus.l11.base.dataSets.HumanDataSet;
 import ru.otus.l11.base.dataSets.UserDataSet;
+import ru.otus.l11.dbcommon.DDLService;
 
 
 import java.sql.Connection;
@@ -33,15 +36,15 @@ public class Main {
             userFromDb = dbService.load(133, UserDataSet.class);
             System.out.println(humanFromdb);
             System.out.println(userFromDb);
-            dbService.dropTable(UserDataSet.class);
-            dbService.dropTable(HumanDataSet.class);
+            DDLService.dropTable(connection,UserDataSet.class);
+            DDLService.dropTable(connection,HumanDataSet.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     private static void hibernateORM() {
-        DBService dbService = new DBServiceHibernateImpl();
+        DBService dbService = new DBServiceHibernateImpl(new Configuration().configure("hibernate.cfg.xml"),UserDataSet.class, AddressDataSet.class,PhoneDataSet.class);
         UserDataSet user = new UserDataSet("Alex", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet[]{new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555")});
         try {
             dbService.save(user);

@@ -15,12 +15,10 @@ public class UserHibernateDAO implements UserDAO {
     @Override
     public <T extends DataSet> void save(T user) throws SQLException {
         session.save(user);
-
-
     }
 
     @Override
     public <T extends DataSet> T load(long id, Class<T> cls) throws SQLException {
-        return session.get(cls,id);
+        return session.get(cls, id);
     }
 }
