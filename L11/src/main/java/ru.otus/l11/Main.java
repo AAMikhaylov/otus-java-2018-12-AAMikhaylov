@@ -36,24 +36,30 @@ public class Main {
             userFromDb = dbService.load(133, UserDataSet.class);
             System.out.println(humanFromdb);
             System.out.println(userFromDb);
-            DDLService.dropTable(connection,UserDataSet.class);
-            DDLService.dropTable(connection,HumanDataSet.class);
+            dbService.shutdown();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     private static void hibernateORM() {
-        DBService dbService = new DBServiceHibernateImpl(new Configuration().configure("hibernate.cfg.xml"),UserDataSet.class, AddressDataSet.class,PhoneDataSet.class);
+
+
+        Configuration configuration = new Configuration()
+                .configure("hibernate.cfg.xml")
+                .addAnnotatedClass(UserDataSet.class)
+                .addAnnotatedClass(AddressDataSet.class)
+                .addAnnotatedClass(PhoneDataSet.class);
+        DBService dbService = new DBServiceHibernateImpl(configuration);
         UserDataSet user = new UserDataSet("Alex", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet[]{new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555")});
         try {
             dbService.save(user);
             UserDataSet ud = dbService.load(1, UserDataSet.class);
             System.out.println(ud);
+            dbService.shutdown();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
 
     }
 

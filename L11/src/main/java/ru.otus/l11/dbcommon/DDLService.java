@@ -8,8 +8,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DDLService {
+    private Connection connection;
 
-    private static String dbCreateColumnClause(String fieldName, Class<?> fieldClass) {
+    public DDLService(Connection connection) {
+        this.connection = connection;
+    }
+
+    private String dbCreateColumnClause(String fieldName, Class<?> fieldClass) {
         if (fieldClass == byte.class)
             return fieldName + "  TINYINT";
         if (fieldClass == boolean.class)
@@ -32,11 +37,11 @@ public class DDLService {
     }
 
 
-    private static String dbDropQuery(Class<?> javaClass) {
+    private String dbDropQuery(Class<?> javaClass) {
         return "drop table if exists " + DBHelper.dbTableName(javaClass) + ";";
     }
 
-    private static String dbCreateQuery(Class<?> javaClass) {
+    private String dbCreateQuery(Class<?> javaClass) {
         StringBuilder result = new StringBuilder("create table if not exists " + DBHelper.dbTableName(javaClass) + " ");
         result.append("(id  bigint(20) not null primary key auto_increment");
         Field[] fields = javaClass.getDeclaredFields();
@@ -50,18 +55,15 @@ public class DDLService {
     }
 
 
-    public static void createTable(Connection connection, Class<?> dataSetClass) throws SQLException {
+    public void createTable(Class<?> dataSetClass) throws SQLException {
         try (final Statement statement = connection.createStatement()) {
             statement.execute(dbCreateQuery(dataSetClass));
         }
     }
 
-    public static void dropTable(Connection connection, Class<? extends DataSet> dataSetClass) throws SQLException {
+    public void dropTable(Class<? extends DataSet> dataSetClass) throws SQLException {
         try (final Statement statement = connection.createStatement()) {
             statement.execute(dbDropQuery(dataSetClass));
         }
-
     }
-
-
 }

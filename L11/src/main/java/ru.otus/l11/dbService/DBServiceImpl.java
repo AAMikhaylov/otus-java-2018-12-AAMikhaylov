@@ -13,6 +13,7 @@ import java.sql.Statement;
 
 public class DBServiceImpl implements DBService {
     private final Connection connection;
+    private final Class<? extends DataSet> dataSetClasses[];
 
     @Override
     public <T extends DataSet> void save(T user) throws SQLException {
@@ -30,8 +31,20 @@ public class DBServiceImpl implements DBService {
 
     public DBServiceImpl(Connection connection, Class<? extends DataSet>... dataSetClasses) throws SQLException {
         this.connection = connection;
+        this.dataSetClasses=dataSetClasses;
+        DDLService ddlService=new DDLService(connection);
         for (Class<?> dataSetClass : dataSetClasses)
-            DDLService.createTable(connection, dataSetClass);
+            ddlService.createTable(dataSetClass);
+
+    }
+
+    @Override
+    public void shutdown() throws SQLException {
+        DDLService ddlService=new DDLService(connection);
+        for (Class<? extends DataSet> dataSetClass : dataSetClasses)
+            ddlService.dropTable(dataSetClass);
+
+
     }
 }
 

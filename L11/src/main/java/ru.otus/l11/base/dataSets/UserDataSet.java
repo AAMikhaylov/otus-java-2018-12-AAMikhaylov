@@ -1,9 +1,6 @@
 package ru.otus.l11.base.dataSets;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -18,7 +15,8 @@ public class UserDataSet extends DataSet {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
-    private List<PhoneDataSet> phones = new ArrayList<>();
+    @OrderColumn()
+    PhoneDataSet[] phones;
 
     public UserDataSet() {
     }
@@ -27,12 +25,11 @@ public class UserDataSet extends DataSet {
         this.name = name;
         this.age = age;
         this.address = address;
-        if (phones != null)
-            this.phones.addAll(Arrays.asList(phones));
+        this.phones = phones;
     }
 
-    public void setPhones(List<PhoneDataSet> phones) {
-        this.phones.addAll(phones);
+    public void setPhones(PhoneDataSet[] phones) {
+        this.phones = phones;
     }
 
     public String getName() {
@@ -60,11 +57,11 @@ public class UserDataSet extends DataSet {
         result.append("addresses=\"" + address.getStreet() + "\",\r\n");
         result.append("phones=[");
         if (phones != null)
-            for (int i = 0; i < phones.size(); i++)
+            for (int i = 0; i < phones.length; i++)
                 if (i == 0)
-                    result.append("\""+phones.get(i)+"\"");
+                    result.append("\"" + phones[i] + "\"");
                 else
-                    result.append(", \"" + phones.get(i)+"\"");
+                    result.append(", \"" + phones[i] + "\"");
         result.append("]\r\n}\r\n");
         return result.toString();
     }
