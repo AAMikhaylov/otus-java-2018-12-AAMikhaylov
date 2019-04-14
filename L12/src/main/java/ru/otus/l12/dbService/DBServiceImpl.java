@@ -1,15 +1,13 @@
-package ru.otus.l11.dbService;
+package ru.otus.l12.dbService;
 
-import ru.otus.l11.base.DBService;
-import ru.otus.l11.dbcommon.DBHelper;
-import ru.otus.l11.base.dataSets.DataSet;
-import ru.otus.l11.dbService.dao.UserDAO;
-import ru.otus.l11.dbService.dao.UserExecutorDAO;
-import ru.otus.l11.dbcommon.DDLService;
+import ru.otus.l12.base.DataSet;
+import ru.otus.l12.dbService.dao.UserDAO;
+import ru.otus.l12.dbService.dao.UserExecutorDAO;
+import ru.otus.l12.dbcommon.DDLService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.List;
 
 public class DBServiceImpl implements DBService {
     private final Connection connection;
@@ -36,9 +34,26 @@ public class DBServiceImpl implements DBService {
     }
 
     @Override
+    public <T extends DataSet> T load(String login, Class<T> cls) throws SQLException {
+        throw new UnsupportedOperationException("Operation <load by login> not suppported");
+
+    }
+
+    @Override
+    public <T extends DataSet> void update(T user) throws SQLException {
+        throw new UnsupportedOperationException("Operation <update> not suppported");
+    }
+
+    @Override
+    public <T extends DataSet> List<T> load(Class<T> cls) throws SQLException {
+        throw new UnsupportedOperationException("Operation <load all> not suppported");
+    }
+
+    @Override
     public void shutdown() throws SQLException {
         ddlService.dropTables();
     }
+
 }
 
 

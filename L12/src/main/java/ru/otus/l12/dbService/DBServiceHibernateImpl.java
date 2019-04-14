@@ -1,15 +1,15 @@
-package ru.otus.l11.dbService;
+package ru.otus.l12.dbService;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import ru.otus.l11.base.DBService;
-import ru.otus.l11.base.dataSets.DataSet;
-import ru.otus.l11.dbService.dao.UserDAO;
-import ru.otus.l11.dbService.dao.UserHibernateDAO;
+import ru.otus.l12.base.DataSet;
+import ru.otus.l12.dbService.dao.UserDAO;
+import ru.otus.l12.dbService.dao.UserHibernateDAO;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class DBServiceHibernateImpl implements DBService {
     private SessionFactory sessionFactory;
@@ -23,7 +23,7 @@ public class DBServiceHibernateImpl implements DBService {
         try (final Session session = sessionFactory.openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            T result =  executor.executeInTrans(session);
+            T result = executor.executeInTrans(session);
             transaction.commit();
             return result;
         } catch (Exception e) {
@@ -31,6 +31,16 @@ public class DBServiceHibernateImpl implements DBService {
                 transaction.rollback();
             throw e;
         }
+    }
+
+    @Override
+    public <T extends DataSet> void update(T user) throws SQLException {
+        execute((session) -> {
+            UserDAO dao = new UserHibernateDAO(session);
+            dao.update(user);
+            return user;
+        });
+
     }
 
     @Override
@@ -48,6 +58,22 @@ public class DBServiceHibernateImpl implements DBService {
             UserDAO dao = new UserHibernateDAO(session);
             return dao.load(id, cls);
         });
+    }
+
+    @Override
+    public <T extends DataSet> T load(String login, Class<T> cls) throws SQLException {
+        return execute((session) -> {
+            UserDAO dao = new UserHibernateDAO(session);
+            return dao.load(login, cls);
+        });
+    }
+
+    @Override
+    public <T extends DataSet> List<T> load(Class<T> cls) throws SQLException {
+        try (final Session session = sessionFactory.openSession()) {
+            UserDAO dao = new UserHibernateDAO(session);
+            return dao.load(cls);
+        }
     }
 
     @Override

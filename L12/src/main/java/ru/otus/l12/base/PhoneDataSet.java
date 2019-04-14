@@ -1,4 +1,4 @@
-package ru.otus.l11.base.dataSets;
+package ru.otus.l12.base;
 
 import javax.persistence.*;
 

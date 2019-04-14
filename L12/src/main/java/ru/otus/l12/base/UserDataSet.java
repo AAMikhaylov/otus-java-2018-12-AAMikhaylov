@@ -1,15 +1,21 @@
-package ru.otus.l11.base.dataSets;
+package ru.otus.l12.base;
+
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name="user")
 @Table(name = "user")
 public class UserDataSet extends DataSet {
+    @NaturalId
+    @Column(name = "login", length = 50, unique = true, nullable = false)
+    private String login;
+    @Column(name = "password", length = 50, nullable = false)
+    private String password;
     @Column(name = "name")
     private String name;
     @Column(name = "age")
     private int age;
-
     @OneToOne(cascade = CascadeType.ALL)
     private AddressDataSet address;
 
@@ -17,11 +23,16 @@ public class UserDataSet extends DataSet {
     @JoinColumn(name = "user_id", nullable = false)
     @OrderColumn()
     PhoneDataSet[] phones;
+    @Column(name = "sessionID")
+    private String sessionID;
 
     public UserDataSet() {
+
     }
 
-    public UserDataSet(String name, int age, AddressDataSet address, PhoneDataSet... phones) {
+    public UserDataSet(String login, String password, String name, int age, AddressDataSet address, PhoneDataSet... phones) {
+        this.login = login;
+        this.password=password;
         this.name = name;
         this.age = age;
         this.address = address;
@@ -30,6 +41,10 @@ public class UserDataSet extends DataSet {
 
     public void setPhones(PhoneDataSet[] phones) {
         this.phones = phones;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getName() {
@@ -66,5 +81,13 @@ public class UserDataSet extends DataSet {
             result.append("]\r\n}\r\n");
         }
         return result.toString();
+    }
+
+    public void setSessionID(String sessionID) {
+        this.sessionID = sessionID;
+    }
+
+    public String getSessionID() {
+        return sessionID;
     }
 }

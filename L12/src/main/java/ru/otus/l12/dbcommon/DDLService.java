@@ -1,6 +1,6 @@
-package ru.otus.l11.dbcommon;
+package ru.otus.l12.dbcommon;
 
-import ru.otus.l11.base.dataSets.DataSet;
+import ru.otus.l12.base.DataSet;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;

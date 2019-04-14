@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <title>Страница администратора</title>
+    <script type="text/javascript">
+function loadUserList() {
+   var jsonVar = $.ajax({
+      url: "/users",
+      type: "GET",
+      data: ({id :1}),
+      dataType: "html",
+      async:false
+   }
+).responseText;
+
+var data = JSON.parse(jsonVar);
+var list = '<table border="1" width="700" cellpadding="5" cellspacing="0"><tr><th width="100">Логин</th><th width="100">Имя</th>';
+list += '<th width="80">Возраст</th><th width="*">Адрес</th><th width="100">Телефоны</th></tr>';
+for (var i=0;i<data.length;i++) {
+  list += '<tr><td>' + data[i].login + '</td><td>'+ data[i].name + '</td><td>'+ data[i].age+ '</td><td>'+ data[i].address.street+'</td><td>';
+  for (var j=0;j<data[i].phones.length;j++)
+    list += '<div>' + data[i].phones[j].number +'</div>';
+  list += '</td></tr>';
+}
+list += '</table>';
+document.getElementById('userListDiv').innerHTML = list;
+}
+</script>
+</head>
+
+<body onload='loadUserList();'>
+<h1>${userName}, добро пожаловать на страницу администратора</h1>
+<hr>
+<div>
+    <h2> На этой странице вы можете: </h2>
+</div>
+<div style="font-size: 20px;">
+    1. Посмотреть список пользователей:
+</div>
+<div id="userListDiv">
+</div>
+<div style="font-size: 20px;"><br>
+    2. Добавить нового пользователя:
+</div>
+<div style="font-size: 20px;">
+    3. Узнать общее количество пользователей:
+</div>
+<div style="font-size: 20px;">
+    4. Узнать имя пользователя по его id:
+</div>
+
+
+</body>
+</html>
