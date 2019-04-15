@@ -68,12 +68,23 @@ public class DBServiceHibernateImpl implements DBService {
         });
     }
 
+
     @Override
     public <T extends DataSet> List<T> load(Class<T> cls) throws SQLException {
         try (final Session session = sessionFactory.openSession()) {
             UserDAO dao = new UserHibernateDAO(session);
             return dao.load(cls);
         }
+
+    }
+
+    @Override
+    public long count() throws SQLException {
+        try (final Session session = sessionFactory.openSession()) {
+            UserDAO dao = new UserHibernateDAO(session);
+            return dao.count();
+        }
+
     }
 
     @Override

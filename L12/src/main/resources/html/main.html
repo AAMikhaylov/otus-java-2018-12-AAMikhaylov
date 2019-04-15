@@ -24,6 +24,7 @@ return $.ajax({
    }
 ).responseText;
 }
+
 function getUsersTable(Url) {
 var data = JSON.parse(sendAjaxReq(Url,"GET"));
 var list = '<table border="1" width="700" cellpadding="5" cellspacing="0"><tr><th width="50">ID</th><th width="100">Логин</th><th width="100">Имя</th>';
@@ -38,15 +39,23 @@ if (data[i]!=null) {
 list += '</table>';
 return list;
 }
-function putToDiv(divId,textUrl) {
+function alertUsersCount(url) {
+var data = JSON.parse(sendAjaxReq(url,"GET"));
+alert("Общее количество пользователей - "+data);
+
+}
+function putCountUsersToDiv(divId,textUrl) {
+
+   document.getElementById(divId).innerHTML=getUsersTable(textUrl);
+}
+function putUsersToDiv(divId,textUrl) {
    document.getElementById(divId).innerHTML=getUsersTable(textUrl);
 }
 
-
-</script>
+    </script>
 </head>
 
-<body onload='document.getElementById("userListDiv").innerHTML=getUsersTable("/users");'>
+<body onload="putUsersToDiv('userListDiv','/users?property=list');">
 <h1>${userName}, добро пожаловать на страницу администратора</h1>
 <hr>
 <div>
@@ -55,74 +64,86 @@ function putToDiv(divId,textUrl) {
 <div style="font-size: 20px;">
     1. Посмотреть список пользователей:
 </div>
-<div id="userListDiv">
+<div style="margin-left: 15px;">
+    <div id="userListDiv">
+    </div>
+    <div><br><input type="button" onclick="putUsersToDiv('userListDiv','/users?property=list');" value="Обновить"></div>
 </div>
-<div><br><input type="button" onclick='document.getElementById("userListDiv").innerHTML=getUsersTable("/users");'
-                value="Обновить"></div>
-<div style="font-size: 20px;"><br>
+<br><br><br>
+<div style="font-size: 20px;">
     2. Добавить нового пользователя:
 </div>
 <form action="/user" id="newUserForm" method="post">
-    <table border="1" cellpadding="15" cellspacing="0">
-        <tr>
-            <td>
-                <table border="0" cellpadding="5">
-                    <tr>
-                        <td align="left">Логин</td>
-                        <td><input type="text" name="login" size="15"></td>
-                    </tr>
-                    <tr>
-                        <td align="left">Пароль</td>
-                        <td><input type="text" name="password" size="15"></td>
-                    </tr>
+    <div style="margin-left: 15px;">
+        <table border="1" cellpadding="15" cellspacing="0">
+            <tr>
+                <td>
+                    <table border="0" cellpadding="5">
+                        <tr>
+                            <td align="left">Логин</td>
+                            <td><input type="text" name="login" size="15"></td>
+                        </tr>
+                        <tr>
+                            <td align="left">Пароль</td>
+                            <td><input type="text" name="password" size="15"></td>
+                        </tr>
 
-                    <tr>
-                        <td align="left">Имя</td>
-                        <td><input type="text" name="userName" size="15"></td>
-                    </tr>
-                    <tr>
-                        <td align="left">Возраст</td>
-                        <td><input type="text" name="age" size="5"></td>
-                    </tr>
-                    <tr>
-                        <td>Адрес</td>
-                        <td><input type="text" name="address" size="20"></td>
-                    </tr>
-                    <tr>
-                        <td>Телефоны(через ",")</td>
-                        <td><input type="text" name="phones" size="20"></td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-    <div><br><input type="button" value="Сохранить"
-                    onclick="sendAjaxReq('/newUser','POST','newUserForm');document.getElementById('userListDiv').innerHTML=getUsersTable('/users');">
+                        <tr>
+                            <td align="left">Имя</td>
+                            <td><input type="text" name="userName" size="15"></td>
+                        </tr>
+                        <tr>
+                            <td align="left">Возраст</td>
+                            <td><input type="text" name="age" size="5"></td>
+                        </tr>
+                        <tr>
+                            <td>Адрес</td>
+                            <td><input type="text" name="address" size="20"></td>
+                        </tr>
+                        <tr>
+                            <td>Телефоны(через ",")</td>
+                            <td><input type="text" name="phones" size="20"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <div><br><input type="button" value="Сохранить"
+                        onclick="sendAjaxReq('/newUser','POST','newUserForm'); putUsersToDiv('userListDiv','/users?property=list');">
+
+        </div>
     </div>
 </form>
-<br>
+<br><br><br>
 <div style="font-size: 20px;">
-    3. Узнать общее количество пользователей:
-</div>
+    3. <input type="button" value="Узнать" onclick="alertUsersCount('/users?property=count');"> общее количество
+    пользователей:
 
+</div>
+<br><br>
 
 <div style="font-size: 20px;">
     4. Узнать имя пользователя по его id:
 </div>
-<table border="0" cellpadding="5" cellspacing="0">
-    <tr>
-        <td>
-            ID пользователя:
-        </td>
-        <td>
-            <input type="text" id="id" size="5">
-        </td>
-        <td>
-            <input type="button" value="Получить" onclick='putToDiv("userbyIdDiv","/users?id="+document.getElementById("id").value);'>
-        </td>
-    </tr>
-</table>
-<div id="userbyIdDiv"></div>
+<div style="margin-left: 15px;">
+    <table border="0" cellpadding="5" cellspacing="0">
+        <tr>
+            <td>
+                ID пользователя:
+            </td>
+            <td>
+                <input type="text" id="id" size="5">
+            </td>
+            <td>
+                <input type="button" value="Получить"
+                       onclick='putUsersToDiv("userbyIdDiv","/users?property=list&id="+document.getElementById("id").value);'>
+            </td>
+        </tr>
+    </table>
+    <div id="userbyIdDiv"></div>
+</div>
+<br><br><br>
 
 </body>
 </html>

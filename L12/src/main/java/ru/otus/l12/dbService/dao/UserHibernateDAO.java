@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import ru.otus.l12.base.DataSet;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -37,9 +38,16 @@ public class UserHibernateDAO implements UserDAO {
                 .load();
     }
 
+
     @Override
     public <T extends DataSet> List<T> load(Class<T> cls) throws SQLException {
         Query q = session.createQuery("from user", cls);
-        return  q.getResultList();
+        return q.getResultList();
+    }
+
+    @Override
+    public long count() throws SQLException {
+        TypedQuery<Long> q = session.createQuery("select count (*) from user",Long.class);
+        return  q.getSingleResult();
     }
 }

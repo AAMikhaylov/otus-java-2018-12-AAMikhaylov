@@ -16,5 +16,7 @@ public interface UserDAO {
 
     <T extends DataSet> List<T> load(Class<T> cls) throws SQLException;
 
+    long count() throws SQLException;
+
 
 }

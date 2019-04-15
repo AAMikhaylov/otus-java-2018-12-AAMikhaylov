@@ -24,13 +24,20 @@ public class UsersServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<UserDataSet> users = userService.getUsers(req.getParameter("id"));
-        if (users != null) {
+        String property = req.getParameter("property").trim();
+        String JsonStr = null;
+        if (property.equals("list")) {
+            List<UserDataSet> usersResult = userService.getUsers(req.getParameter("id"));
+            JsonStr = gson.toJson(usersResult);
+        }
+        if (property.equals("count")) {
+            JsonStr = gson.toJson(userService.getUsersCount());
+        }
+        if (JsonStr != null) {
             resp.setContentType(APPLICATION_JSON);
             ServletOutputStream out = resp.getOutputStream();
-            out.print(gson.toJson(users));
+            out.print(JsonStr);
         }
-
-
     }
 }
+

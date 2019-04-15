@@ -72,13 +72,19 @@ public class UserExecutorDAO implements UserDAO {
         throw new UnsupportedOperationException("Operation <load by login> not suppported");
     }
 
-    @Override
-    public <T extends DataSet> List<T> load(Class<T> cls) throws SQLException {
-        throw new UnsupportedOperationException("Operation <load all> not suppported");
-    }
 
     @Override
     public <T extends DataSet> void update(T user) throws SQLException {
         throw new UnsupportedOperationException("Operation <update> not suppported");
+    }
+
+    @Override
+    public <T extends DataSet> List<T> load(Class<T> cls) throws SQLException {
+        throw new UnsupportedOperationException("Operation <execute> not suppported");
+    }
+
+    @Override
+    public long count() throws SQLException {
+        throw new UnsupportedOperationException("Operation <count> not suppported");
     }
 }

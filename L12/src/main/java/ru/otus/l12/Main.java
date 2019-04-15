@@ -65,6 +65,18 @@ public class Main {
 
     }
 
+    private static void initDB(DBService dbService) {
+
+        try {
+            UserDataSet user = new UserDataSet("alexm", "qwerty", "Alexey", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
+            dbService.save(user);
+            user = new UserDataSet("alexm2", "qwerty", "Alexander", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
+            dbService.save(user);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         Configuration configuration = new Configuration()
                 .configure("db/hibernate.cfg.xml")
@@ -72,17 +84,9 @@ public class Main {
                 .addAnnotatedClass(AddressDataSet.class)
                 .addAnnotatedClass(PhoneDataSet.class);
         DBService dbService = new DBServiceHibernateImpl(configuration);
-        UserDataSet user = new UserDataSet("alexm", "qwerty", "Alexey", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
-        try {
-            dbService.save(user);
-            user = new UserDataSet("alexm2", "qwerty", "Alexander", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
-            dbService.save(user);
-        } catch (SQLException e) {
-          e.printStackTrace();
-        }
+        initDB(dbService);
         JettyServer jettyServer = new JettyServer(80, new UserHttpService(dbService));
         jettyServer.start();
         dbService.shutdown();
-
     }
 }

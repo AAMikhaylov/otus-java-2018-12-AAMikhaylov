@@ -9,7 +9,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,14 +30,14 @@ public class UserHttpService {
 
     public void addNewUser(HttpServletRequest req) {
         try {
-            AddressDataSet addr = new AddressDataSet(req.getParameter("address"));
+            AddressDataSet addr = new AddressDataSet(req.getParameter("address").trim());
             String[] phonesStr = req.getParameter("phones").split(",");
             PhoneDataSet[] phones = new PhoneDataSet[phonesStr.length];
             for (int i = 0; i < phonesStr.length; i++)
-                phones[i] = new PhoneDataSet(phonesStr[i]);
-            UserDataSet user = new UserDataSet(req.getParameter("login"),
-                    req.getParameter("password"),
-                    req.getParameter("userName"),
+                phones[i] = new PhoneDataSet(phonesStr[i].trim());
+            UserDataSet user = new UserDataSet(req.getParameter("login").trim(),
+                    req.getParameter("password").trim(),
+                    req.getParameter("userName").trim(),
                     Integer.parseInt(req.getParameter("age")),
                     addr, phones
             );
@@ -97,12 +96,21 @@ public class UserHttpService {
         }
     }
 
+    public long getUsersCount() {
+        try {
+            return dbService.count();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
     public List<UserDataSet> getUsers(String idStr) {
         try {
             if (idStr != null) {
                 int id = Integer.parseInt(idStr);
                 List<UserDataSet> result = new ArrayList<>();
-                result.add(dbService.load(id,UserDataSet.class));
+                result.add(dbService.load(id, UserDataSet.class));
                 return result;
             } else
                 return dbService.load(UserDataSet.class);
