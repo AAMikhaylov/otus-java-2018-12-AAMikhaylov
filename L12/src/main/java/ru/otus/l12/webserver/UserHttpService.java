@@ -1,5 +1,7 @@
 package ru.otus.l12.webserver;
 
+import ru.otus.l12.base.AddressDataSet;
+import ru.otus.l12.base.PhoneDataSet;
 import ru.otus.l12.base.UserDataSet;
 import ru.otus.l12.dbService.DBService;
 
@@ -8,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserHttpService {
@@ -25,6 +28,26 @@ public class UserHttpService {
         return getCookieByName(req, USERNAME_COOKIE_NAME);
 
     }
+
+    public void addNewUser(HttpServletRequest req) {
+        try {
+            AddressDataSet addr = new AddressDataSet(req.getParameter("address"));
+            String[] phonesStr = req.getParameter("phones").split(",");
+            PhoneDataSet[] phones = new PhoneDataSet[phonesStr.length];
+            for (int i = 0; i < phonesStr.length; i++)
+                phones[i] = new PhoneDataSet(phonesStr[i]);
+            UserDataSet user = new UserDataSet(req.getParameter("login"),
+                    req.getParameter("password"),
+                    req.getParameter("userName"),
+                    Integer.parseInt(req.getParameter("age")),
+                    addr, phones
+            );
+            dbService.save(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private String getCookieByName(HttpServletRequest req, String cookieName) {
         Cookie[] cookies = req.getCookies();
@@ -74,10 +97,16 @@ public class UserHttpService {
         }
     }
 
-    public List<UserDataSet> getUsersJson() {
+    public List<UserDataSet> getUsers(String idStr) {
         try {
-            return dbService.load(UserDataSet.class);
-        } catch (SQLException e) {
+            if (idStr != null) {
+                int id = Integer.parseInt(idStr);
+                List<UserDataSet> result = new ArrayList<>();
+                result.add(dbService.load(id,UserDataSet.class));
+                return result;
+            } else
+                return dbService.load(UserDataSet.class);
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

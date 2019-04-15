@@ -10,6 +10,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import ru.otus.l12.webserver.servlets.LoginServlet;
 import ru.otus.l12.webserver.servlets.MainServlet;
+import ru.otus.l12.webserver.servlets.NewUserServlet;
 import ru.otus.l12.webserver.servlets.UsersServlet;
 
 import java.io.BufferedReader;
@@ -30,15 +31,18 @@ public class JettyServer {
         Resource resource = Resource.newClassPathResource("/html");
         ResourceHandler resourceHandler = new ResourceHandler();
         resourceHandler.setBaseResource(resource);
-        ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
-        contextHandler.addServlet(new ServletHolder(new MainServlet(userService)), "/main");
+        ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        TemplateProcessor templateProcessor = new TemplateProcessor();
+
+        contextHandler.addServlet(new ServletHolder(new MainServlet(userService, templateProcessor)), "/main");
         contextHandler.addServlet(new ServletHolder(new LoginServlet(userService)), "/login");
         contextHandler.addServlet(new ServletHolder(new UsersServlet(userService, new Gson())), "/users");
+        contextHandler.addServlet(new ServletHolder(new NewUserServlet(userService)), "/newUser");
 
         contextHandler.addFilter(new FilterHolder(new AuthorisationFilter(userService)), "/main", null);
         contextHandler.addFilter(new FilterHolder(new AuthorisationFilter(userService)), "/users", null);
-        //contextHandler.addServlet()
+        contextHandler.addFilter(new FilterHolder(new AuthorisationFilter(userService)), "/newUser", null);
         Server server = new Server(PORT);
         server.setHandler(new HandlerList(resourceHandler, contextHandler));
         server.start();

@@ -14,10 +14,12 @@ public class MainServlet extends HttpServlet {
     private final TemplateProcessor templateProcessor;
     private final String USERNAME_VARIABLE_NAME="userName";
 
-    public MainServlet(UserHttpService userService) {
+
+    public MainServlet(UserHttpService userService, TemplateProcessor templateProcessor) {
         this.userService = userService;
-        templateProcessor = new TemplateProcessor();
+        this.templateProcessor = templateProcessor;
     }
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -28,15 +30,4 @@ public class MainServlet extends HttpServlet {
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        resp.getWriter().println("it is post!!!");
-    }
-
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.getWriter().println("it is put");
-        System.out.println(req);
-    }
 }

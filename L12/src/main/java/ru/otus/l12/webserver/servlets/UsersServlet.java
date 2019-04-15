@@ -24,7 +24,7 @@ public class UsersServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<UserDataSet> users = userService.getUsersJson();
+        List<UserDataSet> users = userService.getUsers(req.getParameter("id"));
         if (users != null) {
             resp.setContentType(APPLICATION_JSON);
             ServletOutputStream out = resp.getOutputStream();

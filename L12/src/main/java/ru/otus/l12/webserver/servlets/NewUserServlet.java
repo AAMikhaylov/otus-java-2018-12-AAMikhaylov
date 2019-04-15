@@ -8,21 +8,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class LoginServlet extends HttpServlet {
+public class NewUserServlet extends HttpServlet {
     private final UserHttpService userService;
 
-    public LoginServlet(UserHttpService userService) {
+    public NewUserServlet(UserHttpService userService) {
         this.userService = userService;
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String login = req.getParameter("login");
-        String password = req.getParameter("password");
-        boolean authResult = false;
-        if (password != null && login != null && userService.authenticate(login, password, req, resp))
-            resp.sendRedirect("/main");
-        else
-            resp.sendRedirect("/?");
-    }
+        userService.addNewUser(req);
+         }
 }
