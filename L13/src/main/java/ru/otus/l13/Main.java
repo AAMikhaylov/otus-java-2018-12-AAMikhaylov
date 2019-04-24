@@ -1,15 +1,13 @@
 package ru.otus.l13;
+
 import java.util.Arrays;
 
 
 public class Main {
-
-
     private static int[] getArray(int size) {
-
         int[] result = new int[size];
         for (int i = 0; i < size; i++)
-            result[i] = (int)( Math.random() * size);
+            result[i] = (int) (Math.random() * size);
         return result;
     }
 
@@ -19,7 +17,5 @@ public class Main {
         SortArray sa = new SortArray();
         sa.sort(arr);
         System.out.println(Arrays.toString(arr));
-
-
     }
 }
