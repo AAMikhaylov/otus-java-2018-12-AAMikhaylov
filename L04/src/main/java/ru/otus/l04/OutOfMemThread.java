@@ -12,7 +12,6 @@ public class OutOfMemThread extends Thread {
 
     @Override
     public void run() {
-        System.out.println(new Timestamp(System.currentTimeMillis()));
         try {
             System.out.println();
             while (true) {
@@ -21,14 +20,13 @@ public class OutOfMemThread extends Thread {
                 int delCount = (int) (list.size() - (size * 0.75));
                 for (int i = list.size() - 1; i > delCount; i--)
                     list.remove(i);
-                sleep(250);
+               sleep(250);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (OutOfMemoryError e) {
             e.printStackTrace();
         }
-        System.out.println(new Timestamp(System.currentTimeMillis()));
 
     }
 }
