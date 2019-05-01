@@ -25,14 +25,13 @@ public class GcStat {
         return count;
     }
 
-    public synchronized void addCount() {
+    public void addCount() {
         count++;
     }
 
-    public synchronized void addDuration(long duration) {
+    public void addDuration(long duration) {
         this.duration = this.duration + duration;
     }
-
 
 
 }
