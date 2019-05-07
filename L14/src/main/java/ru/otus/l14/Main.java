@@ -1,9 +1,6 @@
 package ru.otus.l14;
 
 
-import ru.otus.l14.front.JettyServer;
-import ru.otus.l14.front.UserHttpService;
-
 public class Main {
 
 
@@ -14,7 +11,7 @@ public class Main {
 
 
 
-        //JettyServer jettyServer = new JettyServer(80, new UserHttpService(dbServer.getDbService()));
+        //JettyServer jettyServer = new JettyServer(80, new FrontendServiceImpl(dbServer.getDbService()));
         //jettyServer.start();
 
   //      dbServer.shutdown();

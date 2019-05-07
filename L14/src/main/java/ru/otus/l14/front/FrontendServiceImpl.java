@@ -1,24 +1,39 @@
 package ru.otus.l14.front;
 
+import ru.otus.l14.app.FrontendService;
+import ru.otus.l14.app.MessageSystemContext;
+import ru.otus.l14.app.messages.MsgAuthUser;
 import ru.otus.l14.db.base.AddressDataSet;
 import ru.otus.l14.db.base.PhoneDataSet;
 import ru.otus.l14.db.base.UserDataSet;
 import ru.otus.l14.db.dbService.DBService;
+import ru.otus.l14.messageSystem.Address;
+import ru.otus.l14.messageSystem.Message;
+import ru.otus.l14.messageSystem.MessageSystem;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
-public class UserHttpService {
+public class FrontendServiceImpl implements FrontendService {
+
     private final int SESSION_EXPIRE_INTERVAL = 600;
     private final String USERNAME_SESSION_ATTRIBUTE = "userName";
     private final String LOGIN_SESSION_ATTRIBUTE = "login";
+    private final MessageSystemContext context;
+    private final Address address;
+    private final ConcurrentMap<String, Boolean> authResults = new ConcurrentHashMap<>();
+
 
     private final DBService dbService;
 
-    public UserHttpService(DBService dbService) {
+    public FrontendServiceImpl(MessageSystemContext context, Address address, DBService dbService) {
+        this.context = context;
+        this.address = address;
         this.dbService = dbService;
     }
 
@@ -55,6 +70,10 @@ public class UserHttpService {
     }
 
     public boolean authenticate(HttpServletRequest req) {
+        getMS().sendMessage(new MsgAuthUser(getAddress(),context.getDbAddress(),login,password));
+
+
+
         UserDataSet user;
         try {
             String login = getAttributeByName(req, LOGIN_SESSION_ATTRIBUTE);
@@ -92,6 +111,10 @@ public class UserHttpService {
         }
     }
 
+    public void authenticateResp(boolean authResult, String msgSourceId) {
+        authResults.putIfAbsent(msgSourceId, authResult);
+    }
+
     public long getUsersCount() {
         try {
             return dbService.count();
@@ -116,4 +139,18 @@ public class UserHttpService {
         }
     }
 
+    @Override
+    public void init() {
+        context.getMessageSystem().addAddressee(this);
+    }
+
+    @Override
+    public Address getAddress() {
+        return address;
+    }
+
+    @Override
+    public MessageSystem getMS() {
+        return context.getMessageSystem();
+    }
 }

@@ -1,6 +1,7 @@
 package ru.otus.l14.front.servlets;
 
-import ru.otus.l14.front.UserHttpService;
+import ru.otus.l14.app.FrontendService;
+import ru.otus.l14.front.FrontendServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,10 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class LoginServlet extends HttpServlet {
-    private final UserHttpService userService;
+    private final FrontendService frontService;
 
-    public LoginServlet(UserHttpService userService) {
-        this.userService = userService;
+    public LoginServlet(FrontendService frontService) {
+        this.frontService = frontService;
     }
 
     @Override
@@ -20,7 +21,8 @@ public class LoginServlet extends HttpServlet {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
         boolean authResult = false;
-        if (password != null && login != null && userService.authenticate(login, password, req, resp))
+        if (password != null && login != null && frontService.authenticate(login, password, req, resp))
+
             resp.sendRedirect("/main");
         else
             resp.sendRedirect("/?");

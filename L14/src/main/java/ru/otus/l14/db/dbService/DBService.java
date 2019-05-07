@@ -6,7 +6,7 @@ import ru.otus.l14.messageSystem.Addressee;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface DBService  extends Addressee {
+public interface DBService extends Addressee {
     void init();
 
     <T extends DataSet> void save(T user) throws SQLException;
