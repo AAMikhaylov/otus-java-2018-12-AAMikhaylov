@@ -8,11 +8,10 @@ public class MessageSystemContext {
     private final MessageSystem messageSystem;
     private Address frontAddress;
     private Address dbAddress;
-    private final FrontendServiceImpl userService;
 
-    public MessageSystemContext(MessageSystem messageSystem, FrontendServiceImpl userService) {
+    public MessageSystemContext(MessageSystem messageSystem) {
         this.messageSystem = messageSystem;
-        this.userService=userService;
+
     }
 
     public MessageSystem getMessageSystem() {
@@ -35,7 +34,4 @@ public class MessageSystemContext {
         this.dbAddress = dbAddress;
     }
 
-    public FrontendServiceImpl getUserService() {
-        return userService;
-    }
 }

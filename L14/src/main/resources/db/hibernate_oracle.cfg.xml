@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
+        <property name="hibernate.connection.driver_class">oracle.jdbc.OracleDriver</property>
+        <property name="hibernate.connection.url">jdbc:oracle:thin:@(description=(address=(protocol=tcp)(host=b-scan.proc.vzb)(port=1793))(connect_data=(server=dedicated)(service_name=tb05.service)))</property>
+        <property name="hibernate.connection.username">BWX</property>
+        <property name="hibernate.connection.password">bwxtst1!</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.hbm2ddl.auto">create</property>
+        <property name="hibernate.connection.useSSL">false</property>
+    </session-factory>
+</hibernate-configuration>

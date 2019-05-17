@@ -5,7 +5,7 @@ import javax.persistence.*;
 @MappedSuperclass
 public abstract class DataSet {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
     public DataSet() {

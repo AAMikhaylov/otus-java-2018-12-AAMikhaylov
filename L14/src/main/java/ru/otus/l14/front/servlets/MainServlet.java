@@ -23,7 +23,7 @@ public class MainServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html;charset=utf-8");
         Map<String, Object> data = new HashMap<>();
-        data.put(USERNAME_VARIABLE_NAME, frontService.getUserNameAttribute(req));
+        data.put(USERNAME_VARIABLE_NAME, req.getSession(false).getAttribute("userName"));
         resp.getWriter().println(templateProcessor.getPage("main.html", data));
         resp.setStatus(HttpServletResponse.SC_OK);
     }

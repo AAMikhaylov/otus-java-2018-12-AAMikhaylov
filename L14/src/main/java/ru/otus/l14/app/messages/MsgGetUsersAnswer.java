@@ -2,23 +2,21 @@ package ru.otus.l14.app.messages;
 
 import ru.otus.l14.app.FrontendService;
 import ru.otus.l14.app.MsgToFrontend;
-import ru.otus.l14.front.UserAuthResult;
 import ru.otus.l14.messageSystem.Address;
 import ru.otus.l14.messageSystem.Message;
 
-public class MsgAuthUserAnswer extends MsgToFrontend {
+public class MsgGetUsersAnswer extends MsgToFrontend {
     private final Message msgSource;
-    private final Boolean userAuthResult;
+    private final String usersJsonList;
 
-
-    public MsgAuthUserAnswer(Address from, Address to, Boolean userAuthResult, Message msgSource) {
+    public MsgGetUsersAnswer(Address from, Address to, String usersJsonList, Message msgSource) {
         super(from, to);
         this.msgSource = msgSource;
-        this.userAuthResult = userAuthResult;
+        this.usersJsonList = usersJsonList;
     }
 
-    public Boolean isAuth() {
-        return userAuthResult;
+    public String getUsersJsonList() {
+        return usersJsonList;
     }
 
     @Override

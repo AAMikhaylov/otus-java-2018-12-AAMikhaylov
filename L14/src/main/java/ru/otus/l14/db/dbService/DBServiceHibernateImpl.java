@@ -37,6 +37,7 @@ public class DBServiceHibernateImpl implements DBService {
     @Override
     public void init() {
         context.getMessageSystem().addAddressee(this);
+
         try {
             UserDataSet user = new UserDataSet("alexm", "qwerty", "Alexey", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
             save(user);
@@ -45,17 +46,20 @@ public class DBServiceHibernateImpl implements DBService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
-    public DBServiceHibernateImpl(MessageSystemContext context, Address address) {
+    public DBServiceHibernateImpl(MessageSystemContext context, Address address, String hibernateCfgFile) {
         this.context = context;
         this.address = address;
+
         Configuration configuration = new Configuration()
-                .configure("db/hibernate.cfg.xml")
+                .configure(hibernateCfgFile)
                 .addAnnotatedClass(UserDataSet.class)
                 .addAnnotatedClass(AddressDataSet.class)
                 .addAnnotatedClass(PhoneDataSet.class);
         sessionFactory = configuration.buildSessionFactory();
+
     }
 
     private <T extends DataSet> T execute(InTransExecutable<T> executor) throws SQLException {

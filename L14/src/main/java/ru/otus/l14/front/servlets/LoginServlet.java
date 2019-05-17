@@ -20,8 +20,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
-        boolean authResult = false;
-        if (password != null && login != null && frontService.authenticate(login, password, req, resp))
+        if (password != null && login != null && frontService.authenticate(login, password, req))
 
             resp.sendRedirect("/main");
         else

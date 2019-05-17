@@ -2,27 +2,26 @@ package ru.otus.l14.app.messages;
 
 import ru.otus.l14.app.FrontendService;
 import ru.otus.l14.app.MsgToFrontend;
-import ru.otus.l14.front.UserAuthResult;
 import ru.otus.l14.messageSystem.Address;
 import ru.otus.l14.messageSystem.Message;
 
-public class MsgAuthUserAnswer extends MsgToFrontend {
+public class MsgGetUsersCountAnswer extends MsgToFrontend {
     private final Message msgSource;
-    private final Boolean userAuthResult;
+    private final String usersCount;
 
-
-    public MsgAuthUserAnswer(Address from, Address to, Boolean userAuthResult, Message msgSource) {
+    public MsgGetUsersCountAnswer(Address from, Address to, String usersCount, Message msgSource) {
         super(from, to);
         this.msgSource = msgSource;
-        this.userAuthResult = userAuthResult;
+        this.usersCount = usersCount;
     }
 
-    public Boolean isAuth() {
-        return userAuthResult;
+    public String getUsersCount() {
+        return usersCount;
     }
 
     @Override
     public void exec(FrontendService frontendService) {
         frontendService.saveAnswer(this, msgSource);
+
     }
 }

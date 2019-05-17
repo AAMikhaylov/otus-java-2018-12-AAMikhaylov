@@ -14,29 +14,26 @@ import java.util.List;
 
 public class UsersServlet extends HttpServlet {
     private final FrontendService frontService;
-    private final Gson gson;
     private static final String APPLICATION_JSON = "application/json;charset=UTF-8";
-
     public UsersServlet(FrontendService frontService, Gson gson) {
         this.frontService = frontService;
-        this.gson = gson;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String property = req.getParameter("property").trim();
-        String JsonStr = null;
+        String jsonResult = null;
         if (property.equals("list")) {
-            List<UserDataSet> usersResult = frontService.getUsers(req.getParameter("id"));
-            JsonStr = gson.toJson(usersResult);
+//            List<UserDataSet> usersResult = frontService.getUsers(req.getParameter("id"));
+            jsonResult = frontService.getUsers(req.getParameter("id"));
         }
         if (property.equals("count")) {
-            JsonStr = gson.toJson(frontService.getUsersCount());
+            jsonResult = frontService.getUsersCount();
         }
-        if (JsonStr != null) {
+        if (jsonResult != null) {
             resp.setContentType(APPLICATION_JSON);
             ServletOutputStream out = resp.getOutputStream();
-            out.print(JsonStr);
+            out.print(jsonResult);
         }
     }
 }
