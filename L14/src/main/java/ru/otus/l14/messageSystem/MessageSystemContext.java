@@ -1,8 +1,4 @@
-package ru.otus.l14.app;
-
-import ru.otus.l14.front.FrontendServiceImpl;
-import ru.otus.l14.messageSystem.Address;
-import ru.otus.l14.messageSystem.MessageSystem;
+package ru.otus.l14.messageSystem;
 
 public class MessageSystemContext {
     private final MessageSystem messageSystem;

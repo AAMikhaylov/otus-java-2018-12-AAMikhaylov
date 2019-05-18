@@ -1,8 +1,5 @@
 package ru.otus.l14.messageSystem;
 
-import ru.otus.l14.app.messages.MsgAuthUser;
-import ru.otus.l14.app.messages.MsgAuthUserAnswer;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,13 +19,14 @@ public class MessageSystem {
         addresseeMap = new HashMap<>();
         messagesMap = new HashMap<>();
     }
+
     public void addAddressee(Addressee addressee) {
         addresseeMap.put(addressee.getAddress(), addressee);
         messagesMap.put(addressee.getAddress(), new LinkedBlockingQueue<>());
     }
 
     public void sendMessage(Message message) {
-        LinkedBlockingQueue<Message> l=messagesMap.get(message.getTo());
+        LinkedBlockingQueue<Message> l = messagesMap.get(message.getTo());
         l.add(message);
     }
 
@@ -52,6 +50,7 @@ public class MessageSystem {
             workers.add(thread);
         }
     }
+
     public void dispose() {
         workers.forEach(Thread::interrupt);
     }

@@ -1,6 +1,5 @@
 package ru.otus.l14.messageSystem;
 
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class Address {

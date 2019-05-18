@@ -1,6 +1,7 @@
-package ru.otus.l14.front.servlets;
+package ru.otus.l14.frontend.webserver.servlets;
 
 import ru.otus.l14.app.FrontendService;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

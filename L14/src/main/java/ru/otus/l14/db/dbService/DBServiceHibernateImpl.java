@@ -4,14 +4,16 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import ru.otus.l14.app.MessageSystemContext;
+import ru.otus.l14.app.DBService;
+import ru.otus.l14.messageSystem.Address;
+import ru.otus.l14.messageSystem.MessageSystemContext;
 import ru.otus.l14.db.base.AddressDataSet;
 import ru.otus.l14.db.base.DataSet;
 import ru.otus.l14.db.base.PhoneDataSet;
 import ru.otus.l14.db.base.UserDataSet;
 import ru.otus.l14.db.dbService.dao.UserDAO;
 import ru.otus.l14.db.dbService.dao.UserHibernateDAO;
-import ru.otus.l14.messageSystem.Address;
+
 import ru.otus.l14.messageSystem.MessageSystem;
 
 import java.sql.SQLException;

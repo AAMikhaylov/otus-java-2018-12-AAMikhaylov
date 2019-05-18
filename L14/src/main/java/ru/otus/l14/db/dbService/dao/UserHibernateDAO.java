@@ -47,7 +47,7 @@ public class UserHibernateDAO implements UserDAO {
 
     @Override
     public long count() throws SQLException {
-        TypedQuery<Long> q = session.createQuery("select count (*) from user",Long.class);
-        return  q.getSingleResult();
+        TypedQuery<Long> q = session.createQuery("select count (*) from user", Long.class);
+        return q.getSingleResult();
     }
 }

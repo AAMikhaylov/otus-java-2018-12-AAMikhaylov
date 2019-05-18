@@ -1,13 +1,15 @@
-package ru.otus.l14.front;
+package ru.otus.l14.frontend;
 
-import ru.otus.l14.app.FrontendService;
-import ru.otus.l14.app.MessageSystemContext;
+import ru.otus.l14.app.*;
 import ru.otus.l14.app.messages.*;
+import ru.otus.l14.messageSystem.Address;
+import ru.otus.l14.messageSystem.Message;
+import ru.otus.l14.messageSystem.MessageSystemContext;
 import ru.otus.l14.db.base.AddressDataSet;
 import ru.otus.l14.db.base.PhoneDataSet;
 import ru.otus.l14.db.base.UserDataSet;
-import ru.otus.l14.messageSystem.Address;
-import ru.otus.l14.messageSystem.Message;
+
+
 import ru.otus.l14.messageSystem.MessageSystem;
 
 import javax.servlet.http.HttpServletRequest;
@@ -103,7 +105,6 @@ public class FrontendServiceImpl implements FrontendService {
         return null;
     }
 
-
     @Override
     public void saveAnswer(Message msgAnswer, Message msgSource) {
         synchronized (msgSource) {
@@ -126,4 +127,5 @@ public class FrontendServiceImpl implements FrontendService {
     public MessageSystem getMS() {
         return context.getMessageSystem();
     }
+
 }

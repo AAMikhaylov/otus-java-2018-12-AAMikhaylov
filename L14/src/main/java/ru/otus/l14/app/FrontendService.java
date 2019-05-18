@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 
 
 public interface FrontendService extends Addressee {
-
     void init();
 
     boolean authenticate(String login, String password, HttpServletRequest req);

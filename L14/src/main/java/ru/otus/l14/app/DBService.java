@@ -1,4 +1,4 @@
-package ru.otus.l14.db.dbService;
+package ru.otus.l14.app;
 
 import ru.otus.l14.db.base.DataSet;
 import ru.otus.l14.messageSystem.Addressee;

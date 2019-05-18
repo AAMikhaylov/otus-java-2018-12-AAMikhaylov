@@ -1,8 +1,8 @@
 package ru.otus.l14.app.messages;
 
-import ru.otus.l14.app.MsgToDB;
+import ru.otus.l14.app.DBService;
+import ru.otus.l14.app.SessionParameters;
 import ru.otus.l14.db.base.UserDataSet;
-import ru.otus.l14.db.dbService.DBService;
 import ru.otus.l14.messageSystem.Address;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,9 +10,6 @@ import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 public class MsgAuthUser extends MsgToDB {
-    private final String USERNAME_SESSION_ATTRIBUTE = "userName";
-    private final String LOGIN_SESSION_ATTRIBUTE = "login";
-    private final int SESSION_EXPIRE_INTERVAL = 600;
 
     private final String login;
     private final String password;
@@ -32,7 +29,7 @@ public class MsgAuthUser extends MsgToDB {
         if (session == null)
             login = null;
         else
-            login = (String) session.getAttribute(LOGIN_SESSION_ATTRIBUTE);
+            login = (String) session.getAttribute(SessionParameters.LOGIN_SESSION_ATTRIBUTE);
         this.httpRequest = httpRequest;
     }
 
@@ -48,9 +45,9 @@ public class MsgAuthUser extends MsgToDB {
                         if (authResult) {
                             HttpSession session = httpRequest.getSession(true);
                             if (session != null) {
-                                session.setMaxInactiveInterval(SESSION_EXPIRE_INTERVAL);
-                                session.setAttribute(LOGIN_SESSION_ATTRIBUTE,login);
-                                session.setAttribute(USERNAME_SESSION_ATTRIBUTE,user.getName());
+                                session.setMaxInactiveInterval(SessionParameters.SESSION_EXPIRE_INTERVAL);
+                                session.setAttribute(SessionParameters.LOGIN_SESSION_ATTRIBUTE, login);
+                                session.setAttribute(SessionParameters.USERNAME_SESSION_ATTRIBUTE, user.getName());
                                 user.setSessionID(session.getId());
                                 dbService.update(user);
                             }

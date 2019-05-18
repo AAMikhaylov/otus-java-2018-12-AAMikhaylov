@@ -1,4 +1,4 @@
-package ru.otus.l14.front;
+package ru.otus.l14.frontend.webserver;
 
 import ru.otus.l14.app.FrontendService;
 
@@ -16,7 +16,6 @@ public class AuthorisationFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
     }
 
     @Override

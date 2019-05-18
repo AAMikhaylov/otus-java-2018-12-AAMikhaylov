@@ -1,10 +1,10 @@
 package ru.otus.l14.app.messages;
 
 import com.google.gson.Gson;
-import ru.otus.l14.app.MsgToDB;
+import ru.otus.l14.app.DBService;
 import ru.otus.l14.db.base.UserDataSet;
-import ru.otus.l14.db.dbService.DBService;
 import ru.otus.l14.messageSystem.Address;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class MsgGetUsers extends MsgToDB {
         try {
             if (userId != null) {
                 users = new ArrayList<>();
-                int id = Integer.parseInt(userId);
+                int id = Integer.parseInt(userId.trim());
                 UserDataSet user = dbService.load(id, UserDataSet.class);
                 users.add(user);
             } else
