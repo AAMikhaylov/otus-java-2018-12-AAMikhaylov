@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <web-app>
-
-    <display-name>L13.1.2</display-name>
+    <display-name>L15</display-name>
     <description>Example of war file</description>
 
-    <!--ervlet>
-        <servlet-name>timerServlet</servlet-name>
-        <servlet-class>ru.otus.servlet.TimerServlet</servlet-class>
+    <servlet>
+        <servlet-name>initServlet</servlet-name>
+        <servlet-class>ru.otus.l15.frontend.webserver.servlets.InitServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
-
-    <servlet-mapping>
-        <servlet-name>timerServlet</servlet-name>
-        <url-pattern>/timer</url-pattern>
-    </servlet-mapping-->
-
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
