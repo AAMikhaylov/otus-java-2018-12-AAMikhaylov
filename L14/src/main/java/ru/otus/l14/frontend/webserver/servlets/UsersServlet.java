@@ -2,6 +2,11 @@ package ru.otus.l14.frontend.webserver.servlets;
 
 import com.google.gson.Gson;
 import ru.otus.l14.app.FrontendService;
+import ru.otus.l14.app.messages.MsgGetUsers;
+import ru.otus.l14.app.messages.MsgGetUsersAnswer;
+import ru.otus.l14.app.messages.MsgGetUsersCount;
+import ru.otus.l14.app.messages.MsgGetUsersCountAnswer;
+import ru.otus.l14.messageSystem.Message;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -18,15 +23,34 @@ public class UsersServlet extends HttpServlet {
         this.frontService = frontService;
     }
 
+    public String getUsersCount() {
+        Message msg = new MsgGetUsersCount(frontService.getAddress(), frontService.getDbAddress());
+        frontService.sendMessage(msg);
+        MsgGetUsersCountAnswer answer = (MsgGetUsersCountAnswer) frontService.getAnswer(msg);
+        if (answer != null)
+            return answer.getUsersCount();
+        return null;
+    }
+
+    public String getUsers(String idStr) {
+        Message msg = new MsgGetUsers(frontService.getAddress(), frontService.getDbAddress(), idStr);
+        frontService.sendMessage(msg);
+        MsgGetUsersAnswer answer = (MsgGetUsersAnswer) frontService.getAnswer(msg);
+        if (answer != null)
+            return answer.getUsersJsonList();
+        return null;
+    }
+
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String property = req.getParameter("property").trim();
         String jsonResult = null;
         if (property.equals("list")) {
-            jsonResult = frontService.getUsers(req.getParameter("id"));
+            jsonResult = getUsers(req.getParameter("id"));
         }
         if (property.equals("count")) {
-            jsonResult = frontService.getUsersCount();
+            jsonResult = getUsersCount();
         }
         if (jsonResult != null) {
             resp.setContentType(APPLICATION_JSON);
