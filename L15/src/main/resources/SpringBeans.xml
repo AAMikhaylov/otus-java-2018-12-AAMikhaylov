@@ -1,0 +1,27 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    <bean id="messageSystem" class="ru.otus.l15.messageSystem.MessageSystem">
+    </bean>
+    <bean id="frontAddress" class="ru.otus.l15.messageSystem.Address">
+        <constructor-arg index="0" value="Frontend"></constructor-arg>
+    </bean>
+    <bean id="dbAddress" class="ru.otus.l15.messageSystem.Address">
+        <constructor-arg index="0" value="DB"></constructor-arg>
+    </bean>
+    <bean id="messageSystemContext" class="ru.otus.l15.messageSystem.MessageSystemContext">
+        <constructor-arg index="0" ref="messageSystem"></constructor-arg>
+        <property name="frontAddress" ref="frontAddress"></property>
+        <property name="dbAddress" ref="dbAddress"></property>
+    </bean>
+    <bean id="frontendService" class="ru.otus.l15.frontend.FrontendServiceImpl" init-method="init">
+        <constructor-arg index="0" ref="messageSystemContext"></constructor-arg>
+        <constructor-arg index="1" ref="frontAddress"></constructor-arg>
+    </bean>
+    <bean id="dbService" class="ru.otus.l15.db.dbService.DBServiceHibernateImpl" init-method="init">
+        <constructor-arg index="0" ref="messageSystemContext"></constructor-arg>
+        <constructor-arg index="1" ref="dbAddress"></constructor-arg>
+        <constructor-arg index="2" value="db/hibernate_oracle.cfg.xml"></constructor-arg>
+    </bean>
+</beans>

@@ -23,8 +23,8 @@ public class Main {
         context.setDbAddress(dbAddress);
         FrontendService frontendService = new FrontendServiceImpl(context, frontAddress);
         frontendService.init();
-        DBService dbService = new DBServiceHibernateImpl(context, dbAddress, "db/hibernate.cfg.xml");
-//        DBService dbService = new DBServiceHibernateImpl(context,dbAddress,"db/hibernate_oracle.cfg.xml");
+//        DBService dbService = new DBServiceHibernateImpl(context, dbAddress, "db/hibernate.cfg.xml");
+        DBService dbService = new DBServiceHibernateImpl(context,dbAddress,"db/hibernate_oracle.cfg.xml");
         dbService.init();
         messageSystem.start();
         JettyServer jettyServer = new JettyServer(80, frontendService);

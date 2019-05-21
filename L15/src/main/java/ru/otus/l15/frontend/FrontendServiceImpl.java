@@ -7,50 +7,42 @@ import ru.otus.l15.messageSystem.Message;
 import ru.otus.l15.messageSystem.MessageSystemContext;
 import ru.otus.l15.messageSystem.MessageSystem;
 
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class FrontendServiceImpl implements FrontendService {
 
 
     private final MessageSystemContext context;
     private final Address address;
-    private final ConcurrentMap<Message, Message> answers = new ConcurrentHashMap<>();
+    private final Map<Message, LinkedBlockingQueue<Message>> answers = new HashMap<>();
 
     public FrontendServiceImpl(MessageSystemContext context, Address address) {
         this.context = context;
         this.address = address;
     }
 
-
     @Override
-    public Message getAnswer(Message srcMsg) {
-        Message answer = null;
-        while (true)
-            synchronized (srcMsg) {
-                try {
-                    answer = answers.get(srcMsg);
-                    if (answer == null)
-                        srcMsg.wait();
-                    else break;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        return answer;
+    public Message getAnswer(Message msgSource) {
+        LinkedBlockingQueue<Message> queue = answers.get(msgSource);
+        try {
+            return queue.take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
     public void saveAnswer(Message msgAnswer, Message msgSource) {
-        synchronized (msgSource) {
-            answers.put(msgSource, msgAnswer);
-            msgSource.notifyAll();
-        }
+        LinkedBlockingQueue<Message> queue = answers.get(msgSource);
+        queue.add(msgAnswer);
     }
 
     @Override
     public void sendMessage(Message message) {
+        answers.put(message, new LinkedBlockingQueue<>());
         getMS().sendMessage(message);
     }
 

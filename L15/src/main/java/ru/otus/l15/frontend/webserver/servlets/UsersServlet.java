@@ -19,8 +19,9 @@ public class UsersServlet extends HttpServlet {
     private final FrontendService frontService;
     private static final String APPLICATION_JSON = "application/json;charset=UTF-8";
 
-    public UsersServlet(FrontendService frontService, Gson gson) {
+    public UsersServlet(FrontendService frontService) {
         this.frontService = frontService;
+
     }
 
     public String getUsersCount() {

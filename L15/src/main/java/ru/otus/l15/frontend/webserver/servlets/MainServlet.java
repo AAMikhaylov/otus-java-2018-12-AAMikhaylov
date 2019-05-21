@@ -11,9 +11,12 @@ import java.util.Map;
 
 public class MainServlet extends HttpServlet {
 
-    private final TemplateProcessor templateProcessor;
+    private TemplateProcessor templateProcessor;
     private final String USERNAME_VARIABLE_NAME = "userName";
 
+
+    public MainServlet() {
+    }
 
     public MainServlet(TemplateProcessor templateProcessor) {
         this.templateProcessor = templateProcessor;

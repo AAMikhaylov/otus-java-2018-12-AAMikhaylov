@@ -5,7 +5,7 @@ import org.hibernate.annotations.NaturalId;
 import javax.persistence.*;
 
 @Entity(name = "user")
-@Table(name = "user")
+@Table(name = "user_table")
 public class UserDataSet extends DataSet {
     @NaturalId
     @Column(name = "login", length = 50, unique = true, nullable = false)

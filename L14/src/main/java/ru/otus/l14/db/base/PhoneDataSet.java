@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "phone")
 public class PhoneDataSet extends DataSet {
 
-    @Column(name = "number")
+    @Column(name = "phone_number")
     private String number;
 
     public PhoneDataSet() {
