@@ -7,7 +7,7 @@ public class MessageSystemContext {
 
     public MessageSystemContext(MessageSystem messageSystem) {
         this.messageSystem = messageSystem;
-
+        System.out.println("MessageSystemContext");
     }
 
     public MessageSystem getMessageSystem() {

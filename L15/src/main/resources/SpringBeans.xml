@@ -22,6 +22,6 @@
     <bean id="dbService" class="ru.otus.l15.db.dbService.DBServiceHibernateImpl" init-method="init">
         <constructor-arg index="0" ref="messageSystemContext"></constructor-arg>
         <constructor-arg index="1" ref="dbAddress"></constructor-arg>
-        <constructor-arg index="2" value="db/hibernate_oracle.cfg.xml"></constructor-arg>
+        <constructor-arg index="2" value="db/hibernate.cfg.xml"></constructor-arg>
     </bean>
 </beans>

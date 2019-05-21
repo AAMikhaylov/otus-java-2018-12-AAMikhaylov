@@ -40,21 +40,21 @@ public class DBServiceHibernateImpl implements DBService {
     public void init() {
         context.getMessageSystem().addAddressee(this);
 
-        try {
-            UserDataSet user = new UserDataSet("alexm", "qwerty", "Alexey", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
-            save(user);
-            user = new UserDataSet("alexm2", "qwerty", "Alexander", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
-            save(user);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            UserDataSet user = new UserDataSet("alexm", "qwerty", "Alexey", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
+//            save(user);
+//            user = new UserDataSet("alexm2", "qwerty", "Alexander", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
+//            save(user);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
     public DBServiceHibernateImpl(MessageSystemContext context, Address address, String hibernateCfgFile) {
         this.context = context;
         this.address = address;
-
+        System.out.println("Creating DBService");
         Configuration configuration = new Configuration()
                 .configure(hibernateCfgFile)
                 .addAnnotatedClass(UserDataSet.class)

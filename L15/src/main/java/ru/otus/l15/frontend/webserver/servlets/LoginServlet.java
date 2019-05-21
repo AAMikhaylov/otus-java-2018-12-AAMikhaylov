@@ -18,9 +18,10 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+        log("Init start!");
         WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(this.getServletContext());
         frontService=webApplicationContext.getBean("frontendService",FrontendService.class);
-
+        log("Init finish!");
     }
 
     //public LoginServlet(FrontendService frontService) {
@@ -44,9 +45,13 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        log("Post start!");
         String login = req.getParameter("login");
         String password = req.getParameter("password");
+        log("login="+login);
+        log("password="+password);
         if (password != null && login != null && authenticate(login, password, req))
+
 
             resp.sendRedirect("/main");
         else

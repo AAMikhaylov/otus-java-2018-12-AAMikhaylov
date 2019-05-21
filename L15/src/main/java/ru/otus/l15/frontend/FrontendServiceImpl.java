@@ -21,6 +21,7 @@ public class FrontendServiceImpl implements FrontendService {
     public FrontendServiceImpl(MessageSystemContext context, Address address) {
         this.context = context;
         this.address = address;
+        System.out.println("Creating frontend");
     }
 
     @Override
@@ -42,7 +43,9 @@ public class FrontendServiceImpl implements FrontendService {
 
     @Override
     public void sendMessage(Message message) {
+        System.out.println("Send message");
         answers.put(message, new LinkedBlockingQueue<>());
+        System.out.println("MS=" + getMS());
         getMS().sendMessage(message);
     }
 

@@ -8,7 +8,8 @@
         <property name="hibernate.connection.username">otusstudent</property>
         <property name="hibernate.connection.password">Fktrctq161077</property>
         <property name="hibernate.show_sql">true</property>
-        <property name="hibernate.hbm2ddl.auto">create</property>
+        <!--property name="hibernate.hbm2ddl.auto">create</property-->
+        <property name="hibernate.hbm2ddl.auto">validate</property>
         <property name="hibernate.connection.useSSL">false</property>
     </session-factory>
 </hibernate-configuration>

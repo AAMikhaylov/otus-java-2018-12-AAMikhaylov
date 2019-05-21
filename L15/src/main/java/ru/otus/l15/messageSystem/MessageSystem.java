@@ -15,6 +15,7 @@ public class MessageSystem {
     private final Map<Address, LinkedBlockingQueue<Message>> messagesMap;
 
     public MessageSystem() {
+        System.out.println("Creating message system!");
         workers = new ArrayList<>();
         addresseeMap = new HashMap<>();
         messagesMap = new HashMap<>();
@@ -31,6 +32,7 @@ public class MessageSystem {
     }
 
     public void start() {
+        System.out.println("Start ms!");
         for (Map.Entry<Address, Addressee> entry : addresseeMap.entrySet()) {
             String name = "MS-worker-" + entry.getKey().getId();
             Thread thread = new Thread(() -> {
@@ -38,6 +40,7 @@ public class MessageSystem {
                 while (true) {
                     try {
                         Message message = queue.take();
+                        System.out.println("Getting message!");
                         message.exec(entry.getValue());
                     } catch (InterruptedException e) {
                         logger.log(Level.INFO, "Thread interrupted. Finishing: " + name);
@@ -46,6 +49,7 @@ public class MessageSystem {
                 }
             });
             thread.setName(name);
+            System.out.println("starting " + name);
             thread.start();
             workers.add(thread);
         }

@@ -12,6 +12,8 @@ public final class Address {
 
     public Address(String id) {
         this.id = id;
+        System.out.println("Creating address "+id);
+
     }
 
     @Override

@@ -37,7 +37,7 @@ public class InitServlet extends HttpServlet {
         messageSystem.start();
         ServletContext servletContext=getServletContext();
         TemplateProcessor templateProcessor = new TemplateProcessor();
-        servletContext.addServlet("mainServlet",new MainServlet(templateProcessor)).addMapping("/main");
+//        servletContext.addServlet("mainServlet",new MainServlet(templateProcessor)).addMapping("/main");
 //        servletContext.addServlet("loginServlet",new LoginServlet(frontendService)).addMapping("/login");
         servletContext.addServlet("usersServlet",new UsersServlet(frontendService)).addMapping("/users");
         servletContext.addServlet("newUserServlet",new NewUserServlet(frontendService)).addMapping("/newUser");

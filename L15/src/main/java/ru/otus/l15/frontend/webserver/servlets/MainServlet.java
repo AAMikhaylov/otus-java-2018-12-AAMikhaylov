@@ -14,13 +14,11 @@ public class MainServlet extends HttpServlet {
     private TemplateProcessor templateProcessor;
     private final String USERNAME_VARIABLE_NAME = "userName";
 
-
-    public MainServlet() {
+    public void setTemplateProcessor(TemplateProcessor templateProcessor) {
+        this.templateProcessor = templateProcessor;
     }
 
-    public MainServlet(TemplateProcessor templateProcessor) {
-        this.templateProcessor = templateProcessor;
-
+    public MainServlet() {
     }
 
     @Override
@@ -28,7 +26,7 @@ public class MainServlet extends HttpServlet {
         resp.setContentType("text/html;charset=utf-8");
         Map<String, Object> data = new HashMap<>();
         data.put(USERNAME_VARIABLE_NAME, req.getSession(false).getAttribute(SessionParameters.USERNAME_SESSION_ATTRIBUTE));
-        resp.getWriter().println(templateProcessor.getPage("main.html", data));
+        resp.getWriter().println(new TemplateProcessor().getPage("main.html", data));
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 
