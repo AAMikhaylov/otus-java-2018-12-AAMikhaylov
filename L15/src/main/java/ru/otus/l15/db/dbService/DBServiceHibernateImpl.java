@@ -132,7 +132,7 @@ public class DBServiceHibernateImpl implements DBService {
     }
 
     @Override
-    public void shutdown() throws SQLException {
+    public void shutdown()   {
         sessionFactory.close();
     }
 }

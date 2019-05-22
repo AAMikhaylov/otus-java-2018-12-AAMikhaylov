@@ -58,7 +58,7 @@
         <servlet-name>newUserServlet</servlet-name>
     </filter-mapping>
     <listener>
-        <listener-class>ru.otus.l15.app.WebLoaderListener</listener-class>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 </web-app>
 

@@ -21,5 +21,5 @@ public interface DBService extends Addressee {
 
     long count() throws SQLException;
 
-    void shutdown() throws SQLException;
+    void shutdown();
 }
