@@ -10,13 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainServlet extends HttpServlet {
-
-    private TemplateProcessor templateProcessor;
     private final String USERNAME_VARIABLE_NAME = "userName";
-
-    public void setTemplateProcessor(TemplateProcessor templateProcessor) {
-        this.templateProcessor = templateProcessor;
-    }
 
     public MainServlet() {
     }

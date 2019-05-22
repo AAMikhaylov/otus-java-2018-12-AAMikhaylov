@@ -1,5 +1,7 @@
 package ru.otus.l15.frontend.webserver;
 
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import ru.otus.l15.app.FrontendService;
 import ru.otus.l15.app.messages.MsgAuthUser;
 import ru.otus.l15.app.messages.MsgAuthUserAnswer;
@@ -13,12 +15,13 @@ import java.io.IOException;
 public class AuthorisationFilter implements Filter {
     private FrontendService frontService;
 
-    public AuthorisationFilter(FrontendService frontService) {
-        this.frontService = frontService;
+    public AuthorisationFilter() {
     }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(filterConfig.getServletContext());
+        frontService = webApplicationContext.getBean("frontendService", FrontendService.class);
     }
 
     private boolean authenticate(HttpServletRequest req) {
