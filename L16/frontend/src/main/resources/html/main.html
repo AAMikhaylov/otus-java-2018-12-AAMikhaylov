@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <title>Страница администратора</title>
+    <script type="text/javascript">
+function sendAjaxReq(Url, method, formId) {
+if (formId==null)
+return $.ajax({
+      url: Url,
+      type: method,
+      dataType: "html",
+      async:false
+   }
+).responseText;
+else
+return $.ajax({
+      url: Url,
+      type: method,
+      dataType: "html",
+      data: $("#"+formId).serialize(),
+      async:false
+   }
+).responseText;
+}
+
+function getUsersTable(Url) {
+var data = JSON.parse(sendAjaxReq(Url,"GET"));
+var list = '<table border="1" width="700" cellpadding="5" cellspacing="0"><tr><th width="50">ID</th><th width="100">Логин</th><th width="100">Имя</th>';
+list += '<th width="80">Возраст</th><th width="*">Адрес</th><th width="100">Телефоны</th></tr>';
+for (var i=0;i<data.length;i++)
+if (data[i]!=null) {
+  list += '<tr><td>' + data[i].id + '</td><td>'+ data[i].login + '</td><td>'+ data[i].name + '</td><td>'+ data[i].age+ '</td><td>'+ data[i].address.street+'</td><td>';
+  for (var j=0;j<data[i].phones.length;j++)
+    list += '<div>' + data[i].phones[j].number +'</div>';
+  list += '</td></tr>';
+}
+list += '</table>';
+return list;
+}
+function alertUsersCount(url) {
+var data = JSON.parse(sendAjaxReq(url,"GET"));
+alert("Общее количество пользователей - "+data);
+
+}
+function putCountUsersToDiv(divId,textUrl) {
+
+   document.getElementById(divId).innerHTML=getUsersTable(textUrl);
+}
+function putUsersToDiv(divId,textUrl) {
+   document.getElementById(divId).innerHTML=getUsersTable(textUrl);
+}
+
+
+    </script>
+</head>
+
+<body onload="putUsersToDiv('userListDiv','/users?property=list');">
+<h1>${userName}, добро пожаловать на страницу администратора</h1>
+<hr>
+<div>
+    <h2> На этой странице вы можете: </h2>
+</div>
+<div style="font-size: 20px;">
+    1. Посмотреть список пользователей:
+</div>
+<div style="margin-left: 15px;">
+    <div id="userListDiv">
+    </div>
+    <div><br><input type="button" onclick="putUsersToDiv('userListDiv','/users?property=list');" value="Обновить"></div>
+</div>
+<br><br><br>
+<div style="font-size: 20px;">
+    2. Добавить нового пользователя:
+</div>
+<form action="/user" id="newUserForm" method="post">
+    <div style="margin-left: 15px;">
+        <table border="1" cellpadding="15" cellspacing="0">
+            <tr>
+                <td>
+                    <table border="0" cellpadding="5">
+                        <tr>
+                            <td align="left">Логин</td>
+                            <td><input type="text" name="login" size="15"></td>
+                        </tr>
+                        <tr>
+                            <td align="left">Пароль</td>
+                            <td><input type="text" name="password" size="15"></td>
+                        </tr>
+
+                        <tr>
+                            <td align="left">Имя</td>
+                            <td><input type="text" name="userName" size="15"></td>
+                        </tr>
+                        <tr>
+                            <td align="left">Возраст</td>
+                            <td><input type="text" name="age" size="5"></td>
+                        </tr>
+                        <tr>
+                            <td>Адрес</td>
+                            <td><input type="text" name="address" size="20"></td>
+                        </tr>
+                        <tr>
+                            <td>Телефоны(через ",")</td>
+                            <td><input type="text" name="phones" size="20"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <div><br><input type="button" value="Сохранить"
+                        onclick="sendAjaxReq('/newUser','POST','newUserForm'); putUsersToDiv('userListDiv','/users?property=list');">
+
+        </div>
+    </div>
+</form>
+<br><br><br>
+<div style="font-size: 20px;">
+    3. <input type="button" value="Узнать" onclick="alertUsersCount('/users?property=count');"> общее количество
+    пользователей:
+
+</div>
+<br><br>
+
+<div style="font-size: 20px;">
+    4. Узнать имя пользователя по его id:
+</div>
+<div style="margin-left: 15px;">
+    <table border="0" cellpadding="5" cellspacing="0">
+        <tr>
+            <td>
+                ID пользователя:
+            </td>
+            <td>
+                <input type="text" id="id" size="5">
+            </td>
+            <td>
+                <input type="button" value="Получить"
+                       onclick='putUsersToDiv("userbyIdDiv","/users?property=list&id="+document.getElementById("id").value);'>
+            </td>
+        </tr>
+    </table>
+    <div id="userbyIdDiv"></div>
+</div>
+<br><br><br>
+
+</body>
+</html>
