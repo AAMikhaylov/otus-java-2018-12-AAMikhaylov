@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <web-app>
-    <display-name>L15</display-name>
-    <description>Homework for the OTUS's course "Java Developer". Lesson 15. WAR.</description>
-
+    <display-name>L16</display-name>
+    <description>Homework for the OTUS's course "Java Developer". Lesson 16. Message Server.</description>
     <servlet>
         <servlet-name>loginServlet</servlet-name>
-        <servlet-class>ru.otus.l15.frontend.webserver.servlets.LoginServlet</servlet-class>
+        <servlet-class>ru.otus.frontend.servlets.LoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>loginServlet</servlet-name>
@@ -14,7 +13,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>mainServlet</servlet-name>
-        <servlet-class>ru.otus.l15.frontend.webserver.servlets.MainServlet</servlet-class>
+        <servlet-class>ru.otus.frontend.servlets.MainServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>mainServlet</servlet-name>
@@ -22,7 +21,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>newUserServlet</servlet-name>
-        <servlet-class>ru.otus.l15.frontend.webserver.servlets.NewUserServlet</servlet-class>
+        <servlet-class>ru.otus.frontend.servlets.NewUserServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>newUserServlet</servlet-name>
@@ -30,7 +29,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>usersServlet</servlet-name>
-        <servlet-class>ru.otus.l15.frontend.webserver.servlets.UsersServlet</servlet-class>
+        <servlet-class>ru.otus.frontend.servlets.UsersServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>usersServlet</servlet-name>
@@ -45,7 +44,7 @@
     </context-param>
     <filter>
         <filter-name>authFilter</filter-name>
-        <filter-class>ru.otus.l15.frontend.webserver.AuthorisationFilter</filter-class>
+        <filter-class>ru.otus.frontend.servlets.AuthorisationFilter</filter-class>
         <init-param>
             <param-name>active</param-name>
             <param-value>true</param-value>

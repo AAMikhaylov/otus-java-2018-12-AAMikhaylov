@@ -1,5 +1,8 @@
 package ru.otus.messageSystem;
 
+import ru.otus.messageSystem.client.Client;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +17,16 @@ public class MessageSystem {
     private final Map<Address, Addressee> addresseeMap;
     private final Map<Address, LinkedBlockingQueue<Message>> messagesMap;
 
-    public static void main(String[] args) {
-        System.out.println("Frontend starting!");
+    public static void main(String[] args) throws IOException, InterruptedException {
+//        MessageSystem ms = new MessageSystem();
+        Client client =new Client("java -jar ../dbService/target/dbService.jar", "DirCmd");
+//        Client client =new Client("dir", "DirCmd");
+        client.start();
+        Thread.sleep(5000);
+        client.destroy();
+        client.start();
+        Thread.sleep(5000);
+        client.destroy();
     }
 
     public MessageSystem() {
