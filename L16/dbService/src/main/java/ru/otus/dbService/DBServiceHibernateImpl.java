@@ -21,9 +21,16 @@ public class DBServiceHibernateImpl implements DBService {
     private final MessageSystemContext context;
     private final Address address;
     private final SessionFactory sessionFactory;
+    private final int serverPort;
 
     public static void main(String[] args) {
-        System.out.println("DBService started!");
+        try {
+            if (args.length == 0)
+                throw new Exception("Argument count exception.");
+            DBService db = new DBServiceHibernateImpl("db/hibernate_oracle.cfg.xml", Integer.parseInt(args[0]));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -50,7 +57,22 @@ public class DBServiceHibernateImpl implements DBService {
 
     }
 
+    public DBServiceHibernateImpl(String hibernateCfgFile, int serverPort) {
+        System.out.println("DB Service started for connection to " + serverPort + " port.");
+        this.serverPort = serverPort;
+        this.context = null;
+        this.address = null;
+        Configuration configuration = new Configuration()
+                .configure(hibernateCfgFile)
+                .addAnnotatedClass(UserDataSet.class)
+                .addAnnotatedClass(AddressDataSet.class)
+                .addAnnotatedClass(PhoneDataSet.class);
+        sessionFactory = configuration.buildSessionFactory();
+
+    }
+
     public DBServiceHibernateImpl(MessageSystemContext context, Address address, String hibernateCfgFile) {
+        serverPort = 0;
         this.context = context;
         this.address = address;
         Configuration configuration = new Configuration()

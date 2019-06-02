@@ -1,17 +1,23 @@
-package ru.otus.messageSystem;
+package ru.otus.messageSystem.messages;
+
+import ru.otus.messageSystem.Address;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Message {
     private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
+    public static final String CLASS_NAME_VARIABLE = "className";
+    private final String className;
     private final Address from;
     private final Address to;
     private final String id;
 
-    public Message(Address from, Address to) {
+
+    public Message(Class<?> msgClass, Address from, Address to) {
         this.from = from;
         this.to = to;
         this.id = String.valueOf(ID_GENERATOR.getAndIncrement());
+        this.className = msgClass.getName();
     }
 
     public Address getFrom() {
@@ -22,7 +28,6 @@ public abstract class Message {
         return to;
     }
 
-    public abstract void exec(Addressee addressee);
 
     public String getId() {
         return id;
