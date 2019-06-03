@@ -1,5 +1,6 @@
 package ru.otus.messageSystem;
 
+import org.apache.log4j.Logger;
 import ru.otus.messageSystem.channel.SocketMsgWorker;
 import ru.otus.messageSystem.client.MsgSocketClient;
 import ru.otus.messageSystem.messages.Message;
@@ -9,50 +10,68 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import java.util.Map;
-import java.util.logging.Logger;
+
 
 public class MessageSystem {
-    private final static Logger logger = Logger.getLogger(MessageSystem.class.getName());
+
     private final Map<Address, SocketMsgWorker> socketWorkers;
+    private final Map<Address, MsgSocketClient> socketClients;
+
 
     public static void main(String[] args) throws IOException, InterruptedException {
         MessageSystem ms = new MessageSystem();
+
 //        MsgSocketClient msgSocketClient =new MsgSocketClient("java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService.jar 5500", "DirCmd");
 //        MsgSocketClient msgSocketClient =new MsgSocketClient("java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService.jar", "DirCmd");
 //        MsgSocketClient msgSocketClient = new MsgSocketClient("dir", "DirCmd");
-
-        ms.addClient(new Address("DB"), 555, "java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService.jar");
+        Logger logger = Logger.getLogger(MessageSystem.class.getName());
+        logger.info("Message system starting.");
+        Address dbAddress1 = new Address("DB1");
+        ms.addSocketWorker(dbAddress1, 5551);
+        ms.addClient(dbAddress1, "java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService1.jar 5551");
+        Address dbAddress2 = new Address("DB2");
+        ms.addSocketWorker(dbAddress2, 5552);
+        ms.addClient(dbAddress2, "java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService1.jar 5552");
+        Address feAddress = new Address("FE");
+        ms.addSocketWorker(feAddress, 5553);
+//
+//        ms.addClient(new Address("DB1"), 5551, "java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService.jar 5551");
+//        ms.addClient(new Address("DB2"), 5552, "java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService.jar 5552");
 
 
 //        msgWorker.close();
-        System.out.println("start complete!");
+
 
     }
 
     public MessageSystem() {
-        System.out.println("MS create!");
         socketWorkers = new HashMap<>();
+        socketClients = new HashMap<>();
 
     }
 
     public void routingMessage(Message msg) {
         SocketMsgWorker socketWorker = socketWorkers.get(msg.getTo());
+
         if (socketWorker != null)
             socketWorker.send(msg);
     }
 
-    public void addClient(Address address, int port, String clientStartCmd) {
-        SocketMsgWorker socketWorker = new SocketMsgWorker(this, port);
+    public void addSocketWorker(Address address, int port) {
+        SocketMsgWorker socketWorker = new SocketMsgWorker(this, port, address);
         socketWorkers.put(address, socketWorker);
         socketWorker.start();
-        if (!clientStartCmd.isEmpty()) {
-            MsgSocketClient client = new MsgSocketClient(clientStartCmd);
-            client.start();
-        }
+    }
+
+    public void addClient(Address address, String clientStartCmd) {
+        MsgSocketClient client = new MsgSocketClient(address, clientStartCmd);
+        socketClients.put(address, client);
+        client.start();
     }
 
 
     public void dispose() {
+        socketClients.forEach((k, v) -> v.destroy());
         socketWorkers.forEach((k, v) -> v.close());
     }
 }

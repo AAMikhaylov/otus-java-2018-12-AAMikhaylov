@@ -1,6 +1,8 @@
 package ru.otus.messageSystem.channel;
 
 import com.google.gson.Gson;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -9,66 +11,87 @@ import ru.otus.messageSystem.MessageSystem;
 import ru.otus.messageSystem.messages.Message;
 import ru.otus.messageSystem.app.MsgWorker;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.*;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class SocketMsgWorker implements MsgWorker {
-    private final static int THREAD_COUNT = 3;
+    private final static int THREADS_COUNT = 2;
     private final int port;
     private final MessageSystem messageSystem;
     private final BlockingQueue<Message> output = new LinkedBlockingQueue<>();
+    private final Logger logger;
+    private final Thread mainThread;
     private ServerSocket serverSocket;
     private Socket socket;
-
     private ExecutorService executor;
 
-    public SocketMsgWorker(MessageSystem messageSystem, int port) {
+    public SocketMsgWorker(MessageSystem messageSystem, int port, Address address) {
         this.port = port;
         this.messageSystem = messageSystem;
-        executor = Executors.newFixedThreadPool(THREAD_COUNT);
+        mainThread = new Thread(this::openServerSocket);
+        logger = Logger.getLogger(SocketMsgWorker.class.getName() + "." + address.getId());
     }
 
     public void start() {
-        executor.execute(this::openServerSocket);
+        mainThread.start();
+    }
 
+    private void startMsgTasks() {
+        executor = Executors.newFixedThreadPool(THREADS_COUNT);
+        executor.execute(this::sendMessage);
+        executor.execute(this::receiveMessage);
+    }
 
+    private void stopMsgTasks() {
+        try {
+            if (socket != null && !socket.isClosed()&&!executor.isTerminated()) {
+                socket.shutdownInput();
+                socket.shutdownOutput();
+                executor.shutdownNow();
+                executor.awaitTermination(1, TimeUnit.MINUTES);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error(ExceptionUtils.getStackTrace(e));
+        }
     }
 
     private void openServerSocket() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             this.serverSocket = serverSocket;
-            while (!executor.isShutdown()) {
-                socket = serverSocket.accept();
-                executor.execute(this::sendMessage);
-                executor.execute(this::receiveMessage);
+            logger.info("Listening port " + port);
+            while (!serverSocket.isClosed()) {
+                Socket newSocket = serverSocket.accept();
+                stopMsgTasks();
+                socket=newSocket;
+                startMsgTasks();
+                logger.info("Connection to port " + port + " success!");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.trace(ExceptionUtils.getStackTrace(e));
+        } catch (Exception e) {
+            logger.error(ExceptionUtils.getStackTrace(e));
         }
+
     }
 
     private void sendMessage() {
         try (PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
-            while (socket.isConnected()) {
+            while (!executor.isShutdown() && !socket.isClosed()) {
                 Message msg = output.take();
                 String json = new Gson().toJson(msg);
                 out.println(json);
                 out.println();
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            logger.trace(ExceptionUtils.getStackTrace(e));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(ExceptionUtils.getStackTrace(e));
         }
     }
 
@@ -76,20 +99,24 @@ public class SocketMsgWorker implements MsgWorker {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             String inputLine;
             StringBuilder stringBuilder = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
+            while (!executor.isShutdown() && !socket.isClosed() && (inputLine = in.readLine()) != null) {
                 stringBuilder.append(inputLine);
                 if (inputLine.isEmpty()) {
                     try {
-                        Message msg = getMsgFromJSON(stringBuilder.toString());
-                        messageSystem.routingMessage(msg);
+                        if (stringBuilder.toString().trim().equals("shutdown"))
+                            messageSystem.dispose();
+                        else {
+                            Message msg = getMsgFromJSON(stringBuilder.toString());
+                            messageSystem.routingMessage(msg);
+                        }
                     } catch (ParseException | ClassNotFoundException e) {
-                        e.printStackTrace();
+                        logger.warn(ExceptionUtils.getStackTrace(e));
                     }
                     stringBuilder = new StringBuilder();
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.error(ExceptionUtils.getStackTrace(e));
         }
     }
 
@@ -101,21 +128,24 @@ public class SocketMsgWorker implements MsgWorker {
         return (Message) new Gson().fromJson(json, msgClass);
     }
 
-
     @Override
     public void send(Message msg) {
         output.add(msg);
     }
 
     @Override
+    public void join() throws InterruptedException {
+        mainThread.join();
+    }
+
+    @Override
     public void close() {
-        executor.shutdown();
-        System.out.println("Shutdown!");
-        if (serverSocket != null)
-            try {
-                serverSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            stopMsgTasks();
+            serverSocket.close();
+            logger.info("Shutdown complete.");
+        } catch (IOException e) {
+            logger.error(ExceptionUtils.getStackTrace(e));
+        }
     }
 }

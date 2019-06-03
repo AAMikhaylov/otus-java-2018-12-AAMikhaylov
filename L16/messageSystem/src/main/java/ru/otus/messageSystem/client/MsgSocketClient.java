@@ -1,9 +1,16 @@
 package ru.otus.messageSystem.client;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.log4j.Logger;
+import org.apache.log4j.MDC;
+import ru.otus.messageSystem.Address;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.concurrent.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 public class MsgSocketClient {
     private final int CLIENT_START_INTERVAL_SEC = 2;
@@ -12,76 +19,72 @@ public class MsgSocketClient {
     private final ScheduledExecutorService executorService;
     private Process process;
 
-    public MsgSocketClient(String startCommand) {
+    public MsgSocketClient(Address address, String startCommand) {
         this.startCommand = startCommand;
-        logger = Logger.getLogger(MsgSocketClient.class.getName());
+        logger = Logger.getLogger(MsgSocketClient.class.getName() + "." + address.getId());
         executorService = Executors.newSingleThreadScheduledExecutor();
     }
 
     public void start() {
-
         ScheduledFuture<Process> scheduledFuture = executorService.schedule(() -> {
             try {
                 return startProcess();
             } catch (IOException e) {
-                logger.log(Level.SEVERE, e.getMessage());
+                logger.error(ExceptionUtils.getStackTrace(e));
                 return null;
             }
         }, CLIENT_START_INTERVAL_SEC, TimeUnit.SECONDS);
         try {
             process = scheduledFuture.get();
-        } catch (InterruptedException e) {
-            logger.log(Level.SEVERE, e.getMessage());
-        } catch (ExecutionException e) {
-            logger.log(Level.SEVERE, e.getMessage());
-            e.printStackTrace();
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error(ExceptionUtils.getStackTrace(e));
         }
-
     }
 
     private Process startProcess() throws IOException {
+        logger.info("Starting process with command \"" + startCommand + "\"");
         ProcessBuilder pb = new ProcessBuilder(startCommand.split(" "));
-        pb.redirectErrorStream(true);
-        pb.inheritIO();
+        pb.redirectErrorStream(false);
         Process p = pb.start();
-//        StreamListener output = new StreamListener(p.getInputStream(), "OUTPUT");
-//        new Thread(output).start();
+        StreamListener output = new StreamListener(p.getInputStream());
+        new Thread(output).start();
         return p;
     }
 
     public void destroy() {
-
         if (process != null)
             process.destroy();
         executorService.shutdown();
+        try {
+            executorService.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            logger.error(ExceptionUtils.getStackTrace(e));
+        }
+        logger.info("Shutdown complete.");
 
     }
-/*
 
     private class StreamListener implements Runnable {
-//        private final Logger logger = Logger.getLogger(this.getClass().getName());
-        private final InputStream is;
-        private final String type;
 
-        private StreamListener(InputStream is, String type) {
+        private final InputStream is;
+
+        private StreamListener(InputStream is) {
             this.is = is;
-            this.type = type;
         }
 
         @Override
         public void run() {
-            try (InputStreamReader isr = new InputStreamReader(is, "windows-1251")) {
+            try (InputStreamReader isr = new InputStreamReader(is)) {
 
                 BufferedReader br = new BufferedReader(isr);
                 String line;
-                while ((line = br.readLine()) != null) {
-                    //out.append(type).append(">").append(line).append("\r\n");
-                    logger.log(Level.INFO, name + "    " + line);
-                }
+                while ((line = br.readLine()) != null)
+                    logger.info(line);
+
             } catch (IOException e) {
-                logger.log(Level.SEVERE, e.getMessage());
+
+                logger.error(ExceptionUtils.getStackTrace(e));
             }
         }
     }
-*/
 }
