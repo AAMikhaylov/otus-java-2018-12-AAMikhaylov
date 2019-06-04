@@ -7,7 +7,7 @@ import java.io.Closeable;
 public interface MsgWorker extends Closeable {
     void send(Message msg);
 
-    void join() throws InterruptedException;
+    void join();
 
     void close();
 }

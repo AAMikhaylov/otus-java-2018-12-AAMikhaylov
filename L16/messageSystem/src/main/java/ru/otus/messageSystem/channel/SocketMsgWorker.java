@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.*;
 import java.util.concurrent.*;
 
 
@@ -26,39 +27,59 @@ public class SocketMsgWorker implements MsgWorker {
     private final MessageSystem messageSystem;
     private final BlockingQueue<Message> output = new LinkedBlockingQueue<>();
     private final Logger logger;
-    private final Thread mainThread;
+    private final Thread serverSocketThread;
+    private final Set<Callable<Integer>> tasks = new HashSet<>();
+    private List<Future<Integer>> futures;
+    private ExecutorService executorTasks;
+    private boolean tasksStarted;
+
+//    private final MsgWorkerTasks msgWorkerTasks;
+
     private ServerSocket serverSocket;
     private Socket socket;
-    private ExecutorService executor;
+
 
     public SocketMsgWorker(MessageSystem messageSystem, int port, Address address) {
         this.port = port;
         this.messageSystem = messageSystem;
-        mainThread = new Thread(this::openServerSocket);
+        serverSocketThread = new Thread(this::openServerSocket);
         logger = Logger.getLogger(SocketMsgWorker.class.getName() + "." + address.getId());
+        tasks.add(this::sendMessage);
+        tasks.add(this::receiveMessage);
+        tasksStarted = false;
+
+//        msgWorkerTasks = new MsgWorkerTasks(this::sendMessage, this::receiveMessage, address);
+
+    }
+
+    private void startTasks() {
+        if (!tasksStarted) {
+            futures = new ArrayList<>(THREADS_COUNT);
+            executorTasks = Executors.newFixedThreadPool(THREADS_COUNT);
+            for (Callable<Integer> task : tasks) {
+                Future<Integer> future = executorTasks.submit(task);
+                futures.add(future);
+            }
+            tasksStarted = true;
+        }
+    }
+
+    private void shutdownTasks() {
+        if (tasksStarted) {
+            try {
+                socket.shutdownInput();
+//                socket.shutdownOutput();
+                executorTasks.shutdownNow();
+                executorTasks.awaitTermination(1, TimeUnit.MINUTES);
+            } catch (IOException | InterruptedException e) {
+                logger.error(ExceptionUtils.getStackTrace(e));
+            }
+            tasksStarted = false;
+        }
     }
 
     public void start() {
-        mainThread.start();
-    }
-
-    private void startMsgTasks() {
-        executor = Executors.newFixedThreadPool(THREADS_COUNT);
-        executor.execute(this::sendMessage);
-        executor.execute(this::receiveMessage);
-    }
-
-    private void stopMsgTasks() {
-        try {
-            if (socket != null && !socket.isClosed()&&!executor.isTerminated()) {
-                socket.shutdownInput();
-                socket.shutdownOutput();
-                executor.shutdownNow();
-                executor.awaitTermination(1, TimeUnit.MINUTES);
-            }
-        } catch (IOException | InterruptedException e) {
-            logger.error(ExceptionUtils.getStackTrace(e));
-        }
+        serverSocketThread.start();
     }
 
     private void openServerSocket() {
@@ -67,9 +88,10 @@ public class SocketMsgWorker implements MsgWorker {
             logger.info("Listening port " + port);
             while (!serverSocket.isClosed()) {
                 Socket newSocket = serverSocket.accept();
-                stopMsgTasks();
-                socket=newSocket;
-                startMsgTasks();
+                if (tasksStarted)
+                    shutdownTasks();
+                socket = newSocket;
+                startTasks();
                 logger.info("Connection to port " + port + " success!");
             }
         } catch (IOException e) {
@@ -80,9 +102,10 @@ public class SocketMsgWorker implements MsgWorker {
 
     }
 
-    private void sendMessage() {
+    private Integer sendMessage() {
         try (PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
-            while (!executor.isShutdown() && !socket.isClosed()) {
+
+            while (!Thread.interrupted()) {
                 Message msg = output.take();
                 String json = new Gson().toJson(msg);
                 out.println(json);
@@ -93,19 +116,20 @@ public class SocketMsgWorker implements MsgWorker {
         } catch (Exception e) {
             logger.error(ExceptionUtils.getStackTrace(e));
         }
+        return 0;
     }
 
-    private void receiveMessage() {
+    private Integer receiveMessage() {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             String inputLine;
             StringBuilder stringBuilder = new StringBuilder();
-            while (!executor.isShutdown() && !socket.isClosed() && (inputLine = in.readLine()) != null) {
+            while (!socket.isInputShutdown() && (inputLine = in.readLine()) != null) {
                 stringBuilder.append(inputLine);
                 if (inputLine.isEmpty()) {
                     try {
-                        if (stringBuilder.toString().trim().equals("shutdown"))
+                        if (stringBuilder.toString().trim().equals("shutdown")) {
                             messageSystem.dispose();
-                        else {
+                        } else {
                             Message msg = getMsgFromJSON(stringBuilder.toString());
                             messageSystem.routingMessage(msg);
                         }
@@ -118,6 +142,7 @@ public class SocketMsgWorker implements MsgWorker {
         } catch (Exception e) {
             logger.error(ExceptionUtils.getStackTrace(e));
         }
+        return 0;
     }
 
     private Message getMsgFromJSON(String json) throws ParseException, ClassNotFoundException {
@@ -134,14 +159,22 @@ public class SocketMsgWorker implements MsgWorker {
     }
 
     @Override
-    public void join() throws InterruptedException {
-        mainThread.join();
+    public void join() {
+        try {
+            serverSocketThread.join();
+        } catch (InterruptedException e) {
+            logger.error(ExceptionUtils.getStackTrace(e));
+        }
     }
 
     @Override
     public void close() {
         try {
-            stopMsgTasks();
+            shutdownTasks();
+
+//            socket.close();
+
+//            msgWorkerTasks.destroy();
             serverSocket.close();
             logger.info("Shutdown complete.");
         } catch (IOException e) {

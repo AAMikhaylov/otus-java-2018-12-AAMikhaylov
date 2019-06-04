@@ -28,12 +28,15 @@ public class MessageSystem {
         logger.info("Message system starting.");
         Address dbAddress1 = new Address("DB1");
         ms.addSocketWorker(dbAddress1, 5551);
-        ms.addClient(dbAddress1, "java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService1.jar 5551");
-        Address dbAddress2 = new Address("DB2");
-        ms.addSocketWorker(dbAddress2, 5552);
-        ms.addClient(dbAddress2, "java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService1.jar 5552");
-        Address feAddress = new Address("FE");
-        ms.addSocketWorker(feAddress, 5553);
+//        ms.addClient(dbAddress1, "java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService1.jar 5551");
+//        Address dbAddress2 = new Address("DB2");
+//        ms.addSocketWorker(dbAddress2, 5552);
+//        ms.addClient(dbAddress2, "java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService1.jar 5552");
+//        Address feAddress = new Address("FE");
+//        ms.addSocketWorker(feAddress, 5553);
+        ms.msgWorkersWaiting();
+        logger.info("Shutdown complete.");
+
 //
 //        ms.addClient(new Address("DB1"), 5551, "java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService.jar 5551");
 //        ms.addClient(new Address("DB2"), 5552, "java -Dfile.encoding=UTF-8 -jar ../dbService/target/dbService.jar 5552");
@@ -47,6 +50,11 @@ public class MessageSystem {
     public MessageSystem() {
         socketWorkers = new HashMap<>();
         socketClients = new HashMap<>();
+
+    }
+
+    private void msgWorkersWaiting() {
+        socketWorkers.forEach((k, v) -> v.join());
 
     }
 
@@ -69,9 +77,12 @@ public class MessageSystem {
         client.start();
     }
 
-
     public void dispose() {
-        socketClients.forEach((k, v) -> v.destroy());
-        socketWorkers.forEach((k, v) -> v.close());
+        Thread shutdownThread = new Thread(() -> {
+            socketClients.forEach((k, v) -> v.destroy());
+            socketWorkers.forEach((k, v) -> v.close());
+        });
+        shutdownThread.start();
     }
+
 }
