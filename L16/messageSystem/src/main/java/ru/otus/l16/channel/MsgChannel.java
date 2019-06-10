@@ -3,6 +3,7 @@ package ru.otus.l16.channel;
 import ru.otus.l16.messages.Message;
 
 import java.io.Closeable;
+import java.util.function.Consumer;
 
 public interface MsgChannel extends Closeable {
 
@@ -14,5 +15,5 @@ public interface MsgChannel extends Closeable {
 
     void send(Message msg);
 
-    Message take() throws InterruptedException;
+    void accept(Message message);
 }

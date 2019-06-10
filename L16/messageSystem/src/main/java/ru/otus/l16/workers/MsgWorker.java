@@ -10,12 +10,8 @@ public interface MsgWorker {
 
     void stop();
 
-
     void send(Message msg);
 
-    Message pool();
 
-
-    Message take() throws InterruptedException;
 
 }

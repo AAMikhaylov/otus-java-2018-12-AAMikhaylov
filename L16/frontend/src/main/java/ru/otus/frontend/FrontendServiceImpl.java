@@ -1,22 +1,22 @@
 package ru.otus.frontend;
+
+import ru.otus.l16.channel.MsgChannel;
+import ru.otus.l16.channel.MsgClientChannel;
+
 import ru.otus.l16.messageSystem.Address;
-import ru.otus.l16.messageSystem.Message;
-import ru.otus.l16.messageSystem.MessageSystem;
-import ru.otus.l16.messageSystem.MessageSystemContext;
+import ru.otus.l16.messages.Message;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class FrontendServiceImpl implements FrontendService {
 
-
-    private final MessageSystemContext context;
-    private final Address address;
     private final Map<Message, LinkedBlockingQueue<Message>> answers;
+    private final MsgChannel msgChannel;
 
-    public FrontendServiceImpl(MessageSystemContext context, Address address) {
-        this.context = context;
-        this.address = address;
+    public FrontendServiceImpl(int serverPort, String serverHost, String socketName) {
+        msgChannel = new MsgClientChannel(serverPort, serverHost, socketName, (msg) -> System.out.println(msg));
         answers = new HashMap<>();
     }
 
@@ -38,29 +38,13 @@ public class FrontendServiceImpl implements FrontendService {
     }
 
     @Override
+    public Address getDbAddress() {
+        return null;
+    }
+
+    @Override
     public void sendMessage(Message message) {
         answers.put(message, new LinkedBlockingQueue<>());
-        getMS().sendMessage(message);
+        msgChannel.send(message);
     }
-
-    @Override
-    public void init() {
-        context.getMessageSystem().addAddressee(this);
-    }
-
-    @Override
-    public Address getAddress() {
-        return address;
-    }
-
-    @Override
-    public Address getDbAddress() {
-        return context.getDbAddress();
-    }
-
-    @Override
-    public MessageSystem getMS() {
-        return context.getMessageSystem();
-    }
-
 }

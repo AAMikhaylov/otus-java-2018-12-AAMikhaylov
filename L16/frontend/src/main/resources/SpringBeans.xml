@@ -2,6 +2,15 @@
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="frontMsgChannel" class="ru.otus.l16.channel.MsgClientChannel">
+    </bean>
+
     <bean id="frontendService" class="ru.otus.frontend.FrontendServiceImpl" init-method="init">
+        <constructor-arg type="int" index="0" value="5555"></constructor-arg>
+        <constructor-arg type="java.lang.String" index="1" value="localhost"></constructor-arg>
+        <constructor-arg type="java.lang.String" index="2" value="FE"></constructor-arg>
+
+
     </bean>
 </beans>

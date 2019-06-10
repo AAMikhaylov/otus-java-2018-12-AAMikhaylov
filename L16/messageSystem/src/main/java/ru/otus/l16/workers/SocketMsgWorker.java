@@ -7,14 +7,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import ru.otus.l16.channel.MsgChannel;
-import ru.otus.l16.messageSystem.Address;
-import ru.otus.l16.messageSystem.MessageSystem;
 import ru.otus.l16.messages.Message;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.*;
@@ -24,7 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SocketMsgWorker implements MsgWorker {
     private final static int THREADS_COUNT = 2;
     private final BlockingQueue<Message> output = new LinkedBlockingQueue<>();
-    private final BlockingQueue<Message> input = new LinkedBlockingQueue<>();
     private final Logger logger;
     private final MsgChannel msgChannel;
     private ExecutorService executorTasks;
@@ -54,6 +50,7 @@ public class SocketMsgWorker implements MsgWorker {
 
     public void stop() {
         if (Started) {
+            canRestart.set(false);
             logger.debug("Socket message worker: stopping....");
             try {
                 if (!socket.isClosed())
@@ -66,6 +63,15 @@ public class SocketMsgWorker implements MsgWorker {
             Started = false;
             logger.debug("Socket message worker: shutdown complete.");
         }
+    }
+
+    private void restartChannel() {
+        synchronized (canRestart) {
+            if (!canRestart.get())
+                return;
+            canRestart.set(false);
+        }
+        new Thread(msgChannel::restart).start();
     }
 
     private void sendMessage() {
@@ -91,13 +97,6 @@ public class SocketMsgWorker implements MsgWorker {
         logger.debug("Socket message worker: Thread \"sendMessage\" on socket " + socket + " stopped.");
     }
 
-    private void restartChannel() {
-        if (!canRestart.get())
-            return;
-        canRestart.set(false);
-        new Thread(msgChannel::restart).start();
-    }
-
     private void receiveMessage() {
         logger.debug("Socket message worker: starting Thread \"receiveMessage\" on socket " + socket);
         try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
@@ -113,7 +112,7 @@ public class SocketMsgWorker implements MsgWorker {
                 if (inputLine.isEmpty()) {
                     try {
                         Message msg = getMsgFromJSON(stringBuilder.toString());
-                        input.add(msg);
+                        msgChannel.accept(msg);
                     } catch (ParseException | ClassNotFoundException e) {
                         logger.warn(e);
                         logger.trace("Socket message worker: " + ExceptionUtils.getStackTrace(e));
@@ -140,17 +139,8 @@ public class SocketMsgWorker implements MsgWorker {
     }
 
     @Override
-    public Message pool() {
-        return input.poll();
-    }
-
-    @Override
     public void send(Message message) {
         output.add(message);
     }
 
-    @Override
-    public Message take() throws InterruptedException {
-        return input.take();
-    }
 }

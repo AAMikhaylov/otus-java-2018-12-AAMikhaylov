@@ -1,11 +1,10 @@
 package ru.otus.frontend;
 import ru.otus.l16.messageSystem.Address;
-import ru.otus.l16.messageSystem.Addressee;
-import ru.otus.l16.messageSystem.Message;
+import ru.otus.l16.messages.Message;
 
-public interface FrontendService extends Addressee {
 
-    void init();
+public interface FrontendService {
+
 
     void sendMessage(Message message);
 

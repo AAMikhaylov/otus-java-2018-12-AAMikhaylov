@@ -11,7 +11,8 @@ public class DBServiceMain {
             if (args.length < 2)
                 throw new Exception("Argument count exception.");
             DBService db = new DBServiceHibernateImpl("db/hibernate_oracle.cfg.xml");
-            MsgChannel msgChannel = new MsgClientChannel(Integer.parseInt(args[0]), "localhost", args[1]);
+            MsgChannel msgChannel = new MsgClientChannel(Integer.parseInt(args[0]), "localhost", args[1],(message) -> System.out.println(message));
+            msgChannel.start();
         } catch (Exception e) {
             e.printStackTrace();
         }

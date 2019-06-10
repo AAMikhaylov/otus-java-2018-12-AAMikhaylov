@@ -5,7 +5,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import ru.otus.frontend.FrontendService;
 import ru.otus.frontend.messages.MsgAuthUser;
 import ru.otus.frontend.messages.MsgAuthUserAnswer;
-import ru.otus.l16.messageSystem.Message;
+import ru.otus.l16.messages.Message;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
