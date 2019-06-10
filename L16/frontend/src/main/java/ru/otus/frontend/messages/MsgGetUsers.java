@@ -1,9 +1,9 @@
 package ru.otus.frontend.messages;
 
 import com.google.gson.Gson;
-import ru.otus.dbService.DBService;
-import ru.otus.dbService.base.UserDataSet;
-import ru.otus.messageSystem.Address;
+import ru.otus.l16.dbService.DBService;
+import ru.otus.l16.dbService.base.UserDataSet;
+import ru.otus.l16.messageSystem.Address;
 
 import java.util.ArrayList;
 import java.util.List;

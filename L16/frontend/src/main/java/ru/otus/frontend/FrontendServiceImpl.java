@@ -1,8 +1,8 @@
 package ru.otus.frontend;
-import ru.otus.messageSystem.Address;
-import ru.otus.messageSystem.Message;
-import ru.otus.messageSystem.MessageSystem;
-import ru.otus.messageSystem.MessageSystemContext;
+import ru.otus.l16.messageSystem.Address;
+import ru.otus.l16.messageSystem.Message;
+import ru.otus.l16.messageSystem.MessageSystem;
+import ru.otus.l16.messageSystem.MessageSystemContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;

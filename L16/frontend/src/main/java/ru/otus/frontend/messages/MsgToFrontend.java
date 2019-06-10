@@ -1,9 +1,9 @@
 package ru.otus.frontend.messages;
 
 import ru.otus.frontend.FrontendService;
-import ru.otus.messageSystem.Address;
-import ru.otus.messageSystem.Addressee;
-import ru.otus.messageSystem.Message;
+import ru.otus.l16.messageSystem.Address;
+import ru.otus.l16.messageSystem.Addressee;
+import ru.otus.l16.messageSystem.Message;
 
 public abstract class MsgToFrontend extends Message {
     public MsgToFrontend(Address from, Address to) {

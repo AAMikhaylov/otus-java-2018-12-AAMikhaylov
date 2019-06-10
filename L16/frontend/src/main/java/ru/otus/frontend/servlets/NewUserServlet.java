@@ -5,10 +5,10 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import ru.otus.frontend.FrontendService;
 import ru.otus.frontend.messages.MsgAddUser;
 import ru.otus.frontend.messages.MsgAddUserAnswer;
-import ru.otus.dbService.base.AddressDataSet;
-import ru.otus.dbService.base.PhoneDataSet;
-import ru.otus.dbService.base.UserDataSet;
-import ru.otus.messageSystem.Message;
+import ru.otus.l16.dbService.base.AddressDataSet;
+import ru.otus.l16.dbService.base.PhoneDataSet;
+import ru.otus.l16.dbService.base.UserDataSet;
+import ru.otus.l16.messageSystem.Message;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

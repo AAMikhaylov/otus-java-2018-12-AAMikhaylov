@@ -7,7 +7,7 @@ import ru.otus.frontend.messages.MsgGetUsers;
 import ru.otus.frontend.messages.MsgGetUsersAnswer;
 import ru.otus.frontend.messages.MsgGetUsersCount;
 import ru.otus.frontend.messages.MsgGetUsersCountAnswer;
-import ru.otus.messageSystem.Message;
+import ru.otus.l16.messageSystem.Message;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;

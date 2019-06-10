@@ -67,7 +67,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ru.otus.dbService.DBServiceHibernateImpl</mainClass>
+                            <mainClass>ru.otus.l16.dbService.DBServiceHibernateImpl</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

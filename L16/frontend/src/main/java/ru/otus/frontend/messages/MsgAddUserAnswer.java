@@ -2,8 +2,8 @@ package ru.otus.frontend.messages;
 
 
 import ru.otus.frontend.FrontendService;
-import ru.otus.messageSystem.Address;
-import ru.otus.messageSystem.Message;
+import ru.otus.l16.messageSystem.Address;
+import ru.otus.l16.messageSystem.Message;
 
 public class MsgAddUserAnswer extends MsgToFrontend {
     private final Message msgSource;

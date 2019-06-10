@@ -3,35 +3,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <name>messageSystem</name>
-    <description>Homework for the OTUS's course "Java Developer". Lesson 16. Message Server.</description>
-    <dependencies>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.8.5</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.7</version>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
-        </dependency>
-    </dependencies>
-
+    <name>L16</name>
+    <description>Homework for the OTUS's course "Java Developer". Lesson 16.</description>
     <groupId>ru.otus</groupId>
-    <artifactId>messageSystem</artifactId>
+    <artifactId>l16</artifactId>
     <version>1.0</version>
+  <modules>
+    <module>messageSystem</module>
+    <module>dbService</module>
+    <module>frontend</module>
+  </modules>
     <developers>
         <developer>
             <name>Aleksey Mikhaylov</name>
@@ -45,7 +26,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
-    <build>
+    <!--build>
         <finalName>${project.name}</finalName>
         <plugins>
             <plugin>
@@ -74,8 +55,6 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>
-
-
+    </build-->
 </project>
 

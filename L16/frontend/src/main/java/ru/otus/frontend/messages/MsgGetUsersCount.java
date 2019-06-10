@@ -1,7 +1,7 @@
 package ru.otus.frontend.messages;
 
-import ru.otus.dbService.DBService;
-import ru.otus.messageSystem.Address;
+import ru.otus.l16.dbService.DBService;
+import ru.otus.l16.messageSystem.Address;
 
 public class MsgGetUsersCount extends MsgToDB {
     public MsgGetUsersCount(Address from, Address to) {
