@@ -12,6 +12,7 @@ public interface MsgWorker {
 
     void send(Message msg);
 
+    void join();
 
 
 }

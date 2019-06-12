@@ -11,9 +11,9 @@ public interface MsgChannel extends Closeable {
 
     void restart();
 
-    void join();
-
     void send(Message msg);
 
     void accept(Message message);
+
+    void setAcceptHandler(Consumer<Message> acceptHandler);
 }

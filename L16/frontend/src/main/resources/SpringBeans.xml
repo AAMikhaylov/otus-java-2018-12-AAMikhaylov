@@ -3,14 +3,32 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean id="frontMsgChannel" class="ru.otus.l16.channel.MsgClientChannel">
+    <bean id="frontAddress" class="ru.otus.l16.messageSystem.Address">
+        <constructor-arg index="0" value="Frontend"></constructor-arg>
+    </bean>
+    <bean id="dbAddress1" class="ru.otus.l16.messageSystem.Address">
+        <constructor-arg index="0" value="DB1"></constructor-arg>
+    </bean>
+    <bean id="dbAddress2" class="ru.otus.l16.messageSystem.Address">
+        <constructor-arg index="0" value="DB2"></constructor-arg>
     </bean>
 
-    <bean id="frontendService" class="ru.otus.frontend.FrontendServiceImpl" init-method="init">
-        <constructor-arg type="int" index="0" value="5555"></constructor-arg>
-        <constructor-arg type="java.lang.String" index="1" value="localhost"></constructor-arg>
-        <constructor-arg type="java.lang.String" index="2" value="FE"></constructor-arg>
+    <bean id="frontMsgChannel" class="ru.otus.l16.channel.MsgChannelClient">
+        <constructor-arg type="ru.otus.l16.messageSystem.Address" index="0" ref="frontAddress"></constructor-arg>
+        <constructor-arg type="int" index="1" value="5555"></constructor-arg>
+        <constructor-arg type="java.lang.String" index="2" value="localhost"></constructor-arg>
 
+    </bean>
+    <bean id="frontendService" class="ru.otus.l16.frontend.FrontendServiceImpl" init-method="init">
+        <constructor-arg type="ru.otus.l16.channel.MsgChannel" index="0" ref="frontMsgChannel"></constructor-arg>
+        <constructor-arg type="ru.otus.l16.messageSystem.Address" index="1" ref="frontAddress"></constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="dbAddress1"/>
+                <ref bean="dbAddress2"/>
+            </list>
+
+        </constructor-arg>
 
     </bean>
 </beans>

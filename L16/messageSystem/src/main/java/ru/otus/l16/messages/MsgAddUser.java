@@ -1,6 +1,4 @@
 package ru.otus.l16.messages;
-
-
 import ru.otus.l16.messageSystem.Address;
 
 public class MsgAddUser extends Message {

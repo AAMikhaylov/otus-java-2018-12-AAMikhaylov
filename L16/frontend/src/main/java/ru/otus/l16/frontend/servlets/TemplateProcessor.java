@@ -1,4 +1,4 @@
-package ru.otus.frontend.servlets;
+package ru.otus.l16.frontend.servlets;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

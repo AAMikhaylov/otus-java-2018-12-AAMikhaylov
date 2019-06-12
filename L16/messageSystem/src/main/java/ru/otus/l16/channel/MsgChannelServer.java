@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import ru.otus.l16.app.ClientProcess;
 import ru.otus.l16.client.SocketClientProcess;
 import ru.otus.l16.messageSystem.Address;
-import ru.otus.l16.messageSystem.MessageSystem;
 import ru.otus.l16.messages.Message;
 import ru.otus.l16.workers.MsgWorker;
 import ru.otus.l16.workers.SocketMsgWorker;
@@ -16,11 +15,11 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.function.Consumer;
 
-public class MsgServerChannel implements MsgChannel {
+public class MsgChannelServer implements MsgChannel {
     private final static int RESTART_MIN_INTERVAL = 5000;
     private final int port;
     private final Logger logger;
-    private final Consumer<Message> acceptHandler;
+    private Consumer<Message> acceptHandler;
 
     private ServerSocket serverSocket;
     private final MsgWorker worker;
@@ -28,41 +27,43 @@ public class MsgServerChannel implements MsgChannel {
     private boolean started = false;
 
 
-    public MsgServerChannel(Address address, int port, String startClientCommand, Consumer<Message> acceptHandler) {
-        logger = Logger.getLogger(MsgServerChannel.class.getName() + "." + address.getId());
+    public MsgChannelServer(Address address, int port, String startClientCommand) {
+        logger = Logger.getLogger(MsgChannelServer.class.getName() + "." + address.getId());
         this.port = port;
-        this.acceptHandler=acceptHandler;
-        worker = new SocketMsgWorker(address.getId(), this);
+        worker = new SocketMsgWorker(address, this);
         clientProcess = new SocketClientProcess(address, startClientCommand);
 
     }
+
     private void openServerSocket() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             this.serverSocket = serverSocket;
-            logger.info("Listening port " + port);
+            logger.info("Server channel: Listening port " + port);
             Socket socket = serverSocket.accept();
             worker.start(socket);
-            logger.info("Connection to port " + port + " success!");
-        } catch (SocketException e) {
-            logger.trace(ExceptionUtils.getStackTrace(e));
+            logger.info("Server channel: Connection to port " + port + " success!");
         } catch (Exception e) {
             logger.error(ExceptionUtils.getStackTrace(e));
         }
     }
+
     @Override
     public void start() {
+        if (acceptHandler == null) {
+            throw new NullPointerException("Server channel: Undefined accept messages handler");
+        }
         if (started) {
-            logger.error("Can't be restarted!");
+            logger.error("Server channel: Can't be restarted!");
             return;
         }
-        openServerSocket();
         clientProcess.start();
+        new Thread(this::openServerSocket).start();
         started = true;
     }
 
     @Override
     public void restart() {
-        logger.info("Restarting server socket...");
+        logger.info("Server channel: Restarting server socket...");
         try {
             if (serverSocket != null)
                 serverSocket.close();
@@ -71,12 +72,7 @@ public class MsgServerChannel implements MsgChannel {
             e.printStackTrace();
         }
         openServerSocket();
-        logger.info("Restarting server socket complete.");
-    }
-
-    @Override
-    public void join() {
-
+        logger.info("Server channel: Restarting server socket complete.");
     }
 
     @Override
@@ -90,7 +86,13 @@ public class MsgServerChannel implements MsgChannel {
         worker.send(msg);
     }
 
-    public void accept( Message message) {
+    public void accept(Message message) {
         acceptHandler.accept(message);
     }
+
+    @Override
+    public void setAcceptHandler(Consumer<Message> acceptHandler) {
+        this.acceptHandler = acceptHandler;
+    }
+
 }

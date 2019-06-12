@@ -1,13 +1,11 @@
-package ru.otus.frontend.servlets;
+package ru.otus.l16.frontend.servlets;
 
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import ru.otus.frontend.FrontendService;
-import ru.otus.frontend.messages.MsgGetUsers;
-import ru.otus.frontend.messages.MsgGetUsersAnswer;
-import ru.otus.frontend.messages.MsgGetUsersCount;
-import ru.otus.frontend.messages.MsgGetUsersCountAnswer;
-import ru.otus.l16.messageSystem.Message;
+import ru.otus.l16.frontend.FrontendService;
+import ru.otus.l16.messages.Message;
+import ru.otus.l16.messages.MsgGetUsers;
+import ru.otus.l16.messages.MsgGetUsersCount;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -32,16 +30,16 @@ public class UsersServlet extends HttpServlet {
     public String getUsersCount() {
         Message msg = new MsgGetUsersCount(frontService.getAddress(), frontService.getDbAddress());
         frontService.sendMessage(msg);
-        MsgGetUsersCountAnswer answer = (MsgGetUsersCountAnswer) frontService.getAnswer(msg);
+        MsgGetUsersCount answer = (MsgGetUsersCount) frontService.getAnswer(msg);
         if (answer != null)
-            return answer.getUsersCount();
+            return answer.getCount().toString();
         return null;
     }
 
-    public String getUsers(String idStr) {
-        Message msg = new MsgGetUsers(frontService.getAddress(), frontService.getDbAddress(), idStr);
+    public String getUsers(String userId) {
+        Message msg = new MsgGetUsers(frontService.getAddress(), frontService.getDbAddress(), userId, null);
         frontService.sendMessage(msg);
-        MsgGetUsersAnswer answer = (MsgGetUsersAnswer) frontService.getAnswer(msg);
+        MsgGetUsers answer = (MsgGetUsers) frontService.getAnswer(msg);
         if (answer != null)
             return answer.getUsersJsonList();
         return null;

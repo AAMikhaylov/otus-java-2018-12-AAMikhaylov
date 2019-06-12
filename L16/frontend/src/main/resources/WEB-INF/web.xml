@@ -5,7 +5,7 @@
     <description>Homework for the OTUS's course "Java Developer". Lesson 16. Message Server.</description>
     <servlet>
         <servlet-name>loginServlet</servlet-name>
-        <servlet-class>ru.otus.frontend.servlets.LoginServlet</servlet-class>
+        <servlet-class>ru.otus.l16.frontend.servlets.LoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>loginServlet</servlet-name>
@@ -13,7 +13,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>mainServlet</servlet-name>
-        <servlet-class>ru.otus.frontend.servlets.MainServlet</servlet-class>
+        <servlet-class>ru.otus.l16.frontend.servlets.MainServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>mainServlet</servlet-name>
@@ -21,7 +21,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>newUserServlet</servlet-name>
-        <servlet-class>ru.otus.frontend.servlets.NewUserServlet</servlet-class>
+        <servlet-class>ru.otus.l16.frontend.servlets.NewUserServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>newUserServlet</servlet-name>
@@ -29,7 +29,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>usersServlet</servlet-name>
-        <servlet-class>ru.otus.frontend.servlets.UsersServlet</servlet-class>
+        <servlet-class>ru.otus.l16.frontend.servlets.UsersServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>usersServlet</servlet-name>
@@ -44,7 +44,7 @@
     </context-param>
     <filter>
         <filter-name>authFilter</filter-name>
-        <filter-class>ru.otus.frontend.servlets.AuthorisationFilter</filter-class>
+        <filter-class>ru.otus.l16.frontend.servlets.AuthorisationFilter</filter-class>
         <init-param>
             <param-name>active</param-name>
             <param-value>true</param-value>

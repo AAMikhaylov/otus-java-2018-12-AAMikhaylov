@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import ru.otus.l16.channel.MsgChannel;
+import ru.otus.l16.messageSystem.Address;
 import ru.otus.l16.messages.Message;
 
 import java.io.BufferedReader;
@@ -28,8 +29,8 @@ public class SocketMsgWorker implements MsgWorker {
     private final AtomicBoolean canRestart;
     private Socket socket;
 
-    public SocketMsgWorker(String socketName, MsgChannel msgChannel) {
-        logger = Logger.getLogger(SocketMsgWorker.class.getName() + "." + socketName);
+    public SocketMsgWorker(Address address, MsgChannel msgChannel) {
+        logger = Logger.getLogger(SocketMsgWorker.class.getName() + "." + address.getId());
         this.msgChannel = msgChannel;
         canRestart = new AtomicBoolean(false);
         Started = false;
@@ -82,6 +83,7 @@ public class SocketMsgWorker implements MsgWorker {
                 msg = output.take();
                 String json = new Gson().toJson(msg);
                 out.println(json);
+                logger.trace("Socket message worker: Sending message " + json);
                 out.println();
             }
         } catch (InterruptedException e) {
@@ -112,6 +114,7 @@ public class SocketMsgWorker implements MsgWorker {
                 if (inputLine.isEmpty()) {
                     try {
                         Message msg = getMsgFromJSON(stringBuilder.toString());
+                        logger.trace("Socket message worker: Receive message:: " + stringBuilder.toString());
                         msgChannel.accept(msg);
                     } catch (ParseException | ClassNotFoundException e) {
                         logger.warn(e);
@@ -143,4 +146,12 @@ public class SocketMsgWorker implements MsgWorker {
         output.add(message);
     }
 
+    @Override
+    public void join() {
+        try {
+            executorTasks.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            logger.error("Socket message worker: " + ExceptionUtils.getStackTrace(e));
+        }
+    }
 }

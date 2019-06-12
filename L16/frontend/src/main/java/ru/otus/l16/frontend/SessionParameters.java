@@ -1,4 +1,4 @@
-package ru.otus.frontend;
+package ru.otus.l16.frontend;
 
 public class SessionParameters {
     public final static String USERNAME_SESSION_ATTRIBUTE = "userName";

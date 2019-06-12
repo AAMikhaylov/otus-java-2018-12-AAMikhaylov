@@ -1,6 +1,6 @@
-package ru.otus.frontend.servlets;
+package ru.otus.l16.frontend.servlets;
 
-import ru.otus.frontend.SessionParameters;
+import ru.otus.l16.frontend.SessionParameters;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.IOException;
