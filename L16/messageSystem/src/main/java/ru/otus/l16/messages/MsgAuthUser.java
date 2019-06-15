@@ -18,6 +18,10 @@ public class MsgAuthUser extends Message {
         auth = false;
     }
 
+    void exec(DBService dbService) {
+
+
+    }
     public boolean isAuth() {
         return auth;
     }

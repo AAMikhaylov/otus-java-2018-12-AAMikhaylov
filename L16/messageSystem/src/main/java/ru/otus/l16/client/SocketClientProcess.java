@@ -1,6 +1,7 @@
 package ru.otus.l16.client;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import org.apache.log4j.Logger;
 import ru.otus.l16.app.ClientProcess;
 import ru.otus.l16.messageSystem.Address;
@@ -45,9 +46,9 @@ public class SocketClientProcess implements ClientProcess {
     }
 
     private Process startProcess() throws IOException {
-        logger.info("Starting process with command \"" + startCommand + "\"");
+        logger.info("Client process: Starting process with command \"" + startCommand + "\"");
         ProcessBuilder pb = new ProcessBuilder(startCommand.split(" "));
-        pb.redirectErrorStream(false);
+        pb.redirectErrorStream(true);
         Process p = pb.start();
         StreamListener output = new StreamListener(p.getInputStream());
         new Thread(output).start();
@@ -79,7 +80,6 @@ public class SocketClientProcess implements ClientProcess {
         @Override
         public void run() {
             try (InputStreamReader isr = new InputStreamReader(is)) {
-
                 BufferedReader br = new BufferedReader(isr);
                 String line;
                 while ((line = br.readLine()) != null)

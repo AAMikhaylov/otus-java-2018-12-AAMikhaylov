@@ -23,16 +23,14 @@ public class MsgChannelServer implements MsgChannel {
 
     private ServerSocket serverSocket;
     private final MsgWorker worker;
-    private final ClientProcess clientProcess;
+
     private boolean started = false;
 
 
-    public MsgChannelServer(Address address, int port, String startClientCommand) {
+    public MsgChannelServer(Address address, int port) {
         logger = Logger.getLogger(MsgChannelServer.class.getName() + "." + address.getId());
         this.port = port;
         worker = new SocketMsgWorker(address, this);
-        clientProcess = new SocketClientProcess(address, startClientCommand);
-
     }
 
     private void openServerSocket() {
@@ -56,7 +54,6 @@ public class MsgChannelServer implements MsgChannel {
             logger.error("Server channel: Can't be restarted!");
             return;
         }
-        clientProcess.start();
         new Thread(this::openServerSocket).start();
         started = true;
     }
