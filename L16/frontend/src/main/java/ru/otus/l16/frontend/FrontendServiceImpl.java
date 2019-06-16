@@ -1,21 +1,22 @@
 package ru.otus.l16.frontend;
 
-import ru.otus.l16.channel.MsgChannel;
-
 import ru.otus.l16.messageSystem.Address;
-import ru.otus.l16.messages.Message;
+import ru.otus.l16.messageSystem.channel.MsgChannel;
+import ru.otus.l16.messageSystem.message.Message;
+import ru.otus.l16.messageSystem.MsClient;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class FrontendServiceImpl implements FrontendService {
+public class FrontendServiceImpl implements FrontendService, MsClient {
 
     private final Map<Message, LinkedBlockingQueue<Message>> answers;
-    private final MsgChannel msgChannel;
     private final Address address;
     private final Address[] dbAddresses;
     private int addrIdx = -1;
+    private final MsgChannel msgChannel;
+
 
     public FrontendServiceImpl(MsgChannel msgChannel, Address address, Address... dbAddresses) {
         this.msgChannel = msgChannel;
@@ -24,15 +25,10 @@ public class FrontendServiceImpl implements FrontendService {
         answers = new HashMap<>();
     }
 
-    private void accept(Message message) {
-        LinkedBlockingQueue<Message> queue = answers.get(message);
-        queue.add(message);
-    }
-
 
     @Override
     public void init() {
-        msgChannel.setAcceptHandler(this::accept);
+        msgChannel.setAcceptHandler(this::messageHandler);
         msgChannel.start();
     }
 
@@ -51,15 +47,16 @@ public class FrontendServiceImpl implements FrontendService {
 
 
     @Override
-    public void saveAnswer(Message msgAnswer, Message msgSource) {
-        LinkedBlockingQueue<Message> queue = answers.get(msgSource);
-        queue.add(msgAnswer);
-    }
-
-    @Override
     public void sendMessage(Message message) {
         answers.put(message, new LinkedBlockingQueue<>());
         msgChannel.send(message);
+    }
+
+    @Override
+    public void messageHandler(Message message) {
+        LinkedBlockingQueue<Message> queue = answers.get(message);
+        queue.add(message);
+
     }
 
     @Override
@@ -76,5 +73,4 @@ public class FrontendServiceImpl implements FrontendService {
     public Address getAddress() {
         return address;
     }
-
 }

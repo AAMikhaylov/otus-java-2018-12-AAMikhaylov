@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface DBService {
-    void init();
+    void init(boolean addData);
 
     <T extends DataSet> void save(T user) throws SQLException;
 

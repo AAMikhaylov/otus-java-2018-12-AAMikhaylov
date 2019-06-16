@@ -31,7 +31,7 @@ var list = '<table border="1" width="700" cellpadding="5" cellspacing="0"><tr><t
 list += '<th width="80">Возраст</th><th width="*">Адрес</th><th width="100">Телефоны</th></tr>';
 for (var i=0;i<data.length;i++)
 if (data[i]!=null) {
-  list += '<tr><td>' + data[i].id + '</td><td>'+ data[i].login + '</td><td>'+ data[i].name + '</td><td>'+ data[i].age+ '</td><td>'+ data[i].name.street+'</td><td>';
+  list += '<tr><td>' + data[i].id + '</td><td>'+ data[i].login + '</td><td>'+ data[i].name + '</td><td>'+ data[i].age+ '</td><td>'+ data[i].address.street+'</td><td>';
   for (var j=0;j<data[i].phones.length;j++)
     list += '<div>' + data[i].phones[j].number +'</div>';
   list += '</td></tr>';
@@ -99,7 +99,7 @@ function putUsersToDiv(divId,textUrl) {
                         </tr>
                         <tr>
                             <td>Адрес</td>
-                            <td><input type="text" name="name" size="20"></td>
+                            <td><input type="text" name="address" size="20"></td>
                         </tr>
                         <tr>
                             <td>Телефоны(через ",")</td>
@@ -144,7 +144,10 @@ function putUsersToDiv(divId,textUrl) {
     </table>
     <div id="userbyIdDiv"></div>
 </div>
+<br><br>
+<div style="font-size: 20px;">
+    5. <a href="/shutdown">Выключить</a> сервер
+</div>
 <br><br><br>
-
 </body>
 </html>

@@ -1,6 +1,6 @@
-package ru.otus.l16.workers;
+package ru.otus.l16.messageSystem.workers;
 
-import ru.otus.l16.messages.Message;
+import ru.otus.l16.messageSystem.message.Message;
 
 import java.net.Socket;
 
@@ -13,6 +13,8 @@ public interface MsgWorker {
     void send(Message msg);
 
     void join();
+
+    void setCanRestart(boolean canRestart);
 
 
 }

@@ -1,4 +1,4 @@
-package ru.otus.l16.app;
+package ru.otus.l16.messageSystem.clientProcess;
 
 public interface ClientProcess {
     void start();

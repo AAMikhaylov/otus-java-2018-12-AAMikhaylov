@@ -1,7 +1,7 @@
 package ru.otus.l16.frontend;
 
 import ru.otus.l16.messageSystem.Address;
-import ru.otus.l16.messages.Message;
+import ru.otus.l16.messageSystem.message.Message;
 
 
 public interface FrontendService {
@@ -10,11 +10,9 @@ public interface FrontendService {
 
     void sendMessage(Message message);
 
-    void saveAnswer(Message msgAnswer, Message msgSource);
-
     Message getAnswer(Message srcMsg);
 
     Address getAddress();
 
     Address getDbAddress();
-}
+  }

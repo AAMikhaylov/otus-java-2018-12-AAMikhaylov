@@ -1,18 +1,15 @@
-package ru.otus.l16.channel;
+package ru.otus.l16.messageSystem.channel;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
-import ru.otus.l16.app.ClientProcess;
-import ru.otus.l16.client.SocketClientProcess;
 import ru.otus.l16.messageSystem.Address;
-import ru.otus.l16.messages.Message;
-import ru.otus.l16.workers.MsgWorker;
-import ru.otus.l16.workers.SocketMsgWorker;
+import ru.otus.l16.messageSystem.message.Message;
+import ru.otus.l16.messageSystem.workers.MsgWorker;
+import ru.otus.l16.messageSystem.workers.SocketMsgWorker;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.function.Consumer;
 
 public class MsgChannelServer implements MsgChannel {
@@ -23,8 +20,8 @@ public class MsgChannelServer implements MsgChannel {
 
     private ServerSocket serverSocket;
     private final MsgWorker worker;
-
     private boolean started = false;
+    private boolean canRestart = true;
 
 
     public MsgChannelServer(Address address, int port) {
@@ -48,7 +45,7 @@ public class MsgChannelServer implements MsgChannel {
     @Override
     public void start() {
         if (acceptHandler == null) {
-            throw new NullPointerException("Server channel: Undefined accept messages handler");
+            throw new NullPointerException("Server channel: Undefined accept message handler");
         }
         if (started) {
             logger.error("Server channel: Can't be restarted!");
@@ -60,6 +57,8 @@ public class MsgChannelServer implements MsgChannel {
 
     @Override
     public void restart() {
+        if (!canRestart)
+            return;
         logger.info("Server channel: Restarting server socket...");
         try {
             if (serverSocket != null)
@@ -76,6 +75,7 @@ public class MsgChannelServer implements MsgChannel {
     public void close() throws IOException {
         worker.stop();
         serverSocket.close();
+        logger.info("Server channel: Message channel closed.");
     }
 
     @Override
@@ -92,4 +92,9 @@ public class MsgChannelServer implements MsgChannel {
         this.acceptHandler = acceptHandler;
     }
 
+    @Override
+    public void setCanRestart(boolean canRestart) {
+        this.canRestart=canRestart;
+        worker.setCanRestart(canRestart);
+    }
 }

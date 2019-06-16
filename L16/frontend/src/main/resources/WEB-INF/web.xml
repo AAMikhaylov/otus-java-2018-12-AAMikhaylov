@@ -35,6 +35,15 @@
         <servlet-name>usersServlet</servlet-name>
         <url-pattern>/users</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>shutdownServlet</servlet-name>
+        <servlet-class>ru.otus.l16.frontend.servlets.ShutdownServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>shutdownServlet</servlet-name>
+        <url-pattern>/shutdown</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>

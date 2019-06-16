@@ -3,9 +3,9 @@ package ru.otus.l16.frontend.servlets;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import ru.otus.l16.frontend.FrontendService;
-import ru.otus.l16.messages.Message;
-import ru.otus.l16.messages.MsgGetUsers;
-import ru.otus.l16.messages.MsgGetUsersCount;
+import ru.otus.l16.messageSystem.message.Message;
+import ru.otus.l16.messageSystem.message.MsgGetUsers;
+import ru.otus.l16.messageSystem.message.MsgGetUsersCount;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -37,7 +37,7 @@ public class UsersServlet extends HttpServlet {
     }
 
     public String getUsers(String userId) {
-        Message msg = new MsgGetUsers(frontService.getAddress(), frontService.getDbAddress(), userId, null);
+        Message msg = new MsgGetUsers(frontService.getAddress(), frontService.getDbAddress(), userId);
         frontService.sendMessage(msg);
         MsgGetUsers answer = (MsgGetUsers) frontService.getAnswer(msg);
         if (answer != null)
@@ -47,7 +47,7 @@ public class UsersServlet extends HttpServlet {
 
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         String property = req.getParameter("property").trim();
         String jsonResult = null;
         if (property.equals("list")) {

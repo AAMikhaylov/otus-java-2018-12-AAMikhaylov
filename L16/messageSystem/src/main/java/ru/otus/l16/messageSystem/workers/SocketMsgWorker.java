@@ -1,4 +1,4 @@
-package ru.otus.l16.workers;
+package ru.otus.l16.messageSystem.workers;
 
 import com.google.gson.Gson;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -6,15 +6,16 @@ import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import ru.otus.l16.channel.MsgChannel;
+import ru.otus.l16.messageSystem.channel.MsgChannel;
 import ru.otus.l16.messageSystem.Address;
-import ru.otus.l16.messages.Message;
+import ru.otus.l16.messageSystem.message.Message;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.charset.Charset;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -57,7 +58,6 @@ public class SocketMsgWorker implements MsgWorker {
                 if (!socket.isClosed())
                     socket.close();
                 executorTasks.shutdownNow();
-                executorTasks.awaitTermination(1, TimeUnit.MINUTES);
             } catch (Exception e) {
                 logger.error("Socket message worker: " + ExceptionUtils.getStackTrace(e));
             }
@@ -78,7 +78,7 @@ public class SocketMsgWorker implements MsgWorker {
     private void sendMessage() {
         logger.debug("Socket message worker: starting Thread \"sendMessage\" on socket " + socket);
         Message msg = null;
-        try (PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+        try (PrintWriter out = new PrintWriter(socket.getOutputStream(), true, Charset.forName("UTF-8"))) {
             while (!Thread.interrupted()) {
                 msg = output.take();
                 String json = new Gson().toJson(msg);
@@ -101,7 +101,7 @@ public class SocketMsgWorker implements MsgWorker {
 
     private void receiveMessage() {
         logger.debug("Socket message worker: starting Thread \"receiveMessage\" on socket " + socket);
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), Charset.forName("UTF-8")))) {
             String inputLine;
             StringBuilder stringBuilder = new StringBuilder();
             while (!Thread.interrupted()) {
@@ -143,6 +143,7 @@ public class SocketMsgWorker implements MsgWorker {
 
     @Override
     public void send(Message message) {
+
         output.add(message);
     }
 
@@ -154,4 +155,12 @@ public class SocketMsgWorker implements MsgWorker {
             logger.error("Socket message worker: " + ExceptionUtils.getStackTrace(e));
         }
     }
+
+    @Override
+    public void setCanRestart(boolean canRestart) {
+        synchronized (this.canRestart) {
+            this.canRestart.set(canRestart);
+        }
+    }
+
 }

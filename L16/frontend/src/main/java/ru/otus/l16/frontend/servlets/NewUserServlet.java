@@ -3,8 +3,8 @@ package ru.otus.l16.frontend.servlets;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import ru.otus.l16.frontend.FrontendService;
-import ru.otus.l16.messages.Message;
-import ru.otus.l16.messages.MsgAddUser;
+import ru.otus.l16.messageSystem.message.Message;
+import ru.otus.l16.messageSystem.message.MsgAddUser;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,20 +25,14 @@ public class NewUserServlet extends HttpServlet {
     }
 
     private void addNewUser(HttpServletRequest req) {
+        String userAddress = req.getParameter("address").trim();
+        String userPhones = req.getParameter("phones").trim();
+        String password = req.getParameter("password").trim();
+        String userName = req.getParameter("userName").trim();
+        String login = req.getParameter("login").trim();
+        int age = Integer.parseInt(req.getParameter("age"));
 
-//        AddressDataSet addr = new AddressDataSet(req.getParameter("address").trim());
-//        String[] phonesStr = req.getParameter("phones").split(",");
-//        PhoneDataSet[] phones = new PhoneDataSet[phonesStr.length];
-//        for (int i = 0; i < phonesStr.length; i++)
-//            phones[i] = new PhoneDataSet(phonesStr[i].trim());
-//        UserDataSet user = new UserDataSet(req.getParameter("login").trim(),
-//                req.getParameter("password").trim(),
-//                req.getParameter("userName").trim(),
-//                Integer.parseInt(req.getParameter("age")),
-//                addr, phones
-//        );
-
-        Message msg = new MsgAddUser(frontService.getAddress(), frontService.getDbAddress());
+        Message msg = new MsgAddUser(frontService.getAddress(), frontService.getDbAddress(), login, password, userName, age, userAddress, userPhones);
         frontService.sendMessage(msg);
         MsgAddUser answer = (MsgAddUser) frontService.getAnswer(msg);
     }

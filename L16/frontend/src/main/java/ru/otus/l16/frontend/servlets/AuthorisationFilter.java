@@ -4,8 +4,8 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import ru.otus.l16.frontend.FrontendService;
 import ru.otus.l16.frontend.SessionParameters;
-import ru.otus.l16.messages.Message;
-import ru.otus.l16.messages.MsgAuthUser;
+import ru.otus.l16.messageSystem.message.Message;
+import ru.otus.l16.messageSystem.message.MsgAuthUser;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +30,7 @@ public class AuthorisationFilter implements Filter {
         if (session != null) {
             String sessionID = session.getId();
             String login = (String) session.getAttribute(SessionParameters.LOGIN_SESSION_ATTRIBUTE);
-            Message msg = new MsgAuthUser(frontService.getAddress(), frontService.getDbAddress(), login, "", sessionID);
+            Message msg = new MsgAuthUser(frontService.getAddress(), frontService.getDbAddress(), login, null, sessionID);
             frontService.sendMessage(msg);
             MsgAuthUser answer = (MsgAuthUser) frontService.getAnswer(msg);
             if (answer != null && answer.isAuth())

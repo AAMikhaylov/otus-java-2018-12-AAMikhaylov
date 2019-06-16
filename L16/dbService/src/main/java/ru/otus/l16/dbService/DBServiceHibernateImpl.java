@@ -18,25 +18,27 @@ import java.util.List;
 public class DBServiceHibernateImpl implements DBService {
     private final SessionFactory sessionFactory;
 
-
     @Override
-    public void init() {
-        try {
-            UserDataSet user = new UserDataSet("alexm", "qwerty", "Alexey", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
-            save(user);
-            user = new UserDataSet("alexm2", "qwerty", "Alexander", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
-            save(user);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void init(boolean addData) {
+        if (addData)
+            try {
+                UserDataSet user = new UserDataSet("alexm", "qwerty", "Alexey", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
+                save(user);
+                user = new UserDataSet("alexm2", "qwerty", "Alexander", 19, new AddressDataSet("Ленинский проспект, 40"), new PhoneDataSet("111-222-333"), new PhoneDataSet("333-444-555"));
+                save(user);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
     }
 
-    public DBServiceHibernateImpl(String hibernateCfgFile) {
+    public DBServiceHibernateImpl(String hibernateCfgFile, boolean createSchema) {
         Configuration configuration = new Configuration()
                 .configure(hibernateCfgFile)
                 .addAnnotatedClass(UserDataSet.class)
                 .addAnnotatedClass(AddressDataSet.class)
                 .addAnnotatedClass(PhoneDataSet.class);
+        if (!createSchema)
+            configuration.setProperty("hibernate.hbm2ddl.auto", "validate");
         sessionFactory = configuration.buildSessionFactory();
     }
 

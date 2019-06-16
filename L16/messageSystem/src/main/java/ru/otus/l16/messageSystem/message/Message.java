@@ -1,4 +1,4 @@
-package ru.otus.l16.messages;
+package ru.otus.l16.messageSystem.message;
 
 import ru.otus.l16.messageSystem.Address;
 
@@ -17,6 +17,13 @@ public abstract class Message {
         this.from = from;
         this.to = to;
         this.id = String.valueOf(ID_GENERATOR.getAndIncrement());
+        this.className = msgClass.getName();
+    }
+
+    public Message(String id, Class<?> msgClass, Address from, Address to) {
+        this.id = id;
+        this.from = from;
+        this.to = to;
         this.className = msgClass.getName();
     }
 
@@ -46,5 +53,6 @@ public abstract class Message {
         return id != null ? id.hashCode() : 0;
     }
 
+//    public abstract void exec(MsClient MSClient);
 
 }

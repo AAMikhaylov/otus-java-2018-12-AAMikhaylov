@@ -1,9 +1,8 @@
-package ru.otus.l16.client;
+package ru.otus.l16.messageSystem.clientProcess;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import org.apache.log4j.Logger;
-import ru.otus.l16.app.ClientProcess;
 import ru.otus.l16.messageSystem.Address;
 
 import java.io.BufferedReader;
@@ -13,16 +12,17 @@ import java.io.InputStreamReader;
 import java.util.concurrent.*;
 
 
-public class SocketClientProcess implements ClientProcess {
-    private final int CLIENT_START_INTERVAL_SEC = 2;
+public class ClientProcessImpl implements ClientProcess {
+    private static int instanceCount = 0;
+    private final int CLIENT_START_INTERVAL_SEC = 5;
     private final Logger logger;
     private final String startCommand;
     private final ScheduledExecutorService executorService;
     private Process process;
 
-    public SocketClientProcess(Address address, String startCommand) {
+    public ClientProcessImpl(Address address, String startCommand) {
         this.startCommand = startCommand;
-        logger = Logger.getLogger(SocketClientProcess.class.getName() + "." + address.getId());
+        logger = Logger.getLogger(ClientProcessImpl.class.getName() + "." + address.getId());
         executorService = Executors.newSingleThreadScheduledExecutor();
     }
 
@@ -37,7 +37,8 @@ public class SocketClientProcess implements ClientProcess {
                 logger.error(ExceptionUtils.getStackTrace(e));
                 return null;
             }
-        }, CLIENT_START_INTERVAL_SEC, TimeUnit.SECONDS);
+        }, CLIENT_START_INTERVAL_SEC * instanceCount, TimeUnit.SECONDS);
+        instanceCount++;
         try {
             process = scheduledFuture.get();
         } catch (InterruptedException | ExecutionException e) {
