@@ -79,6 +79,7 @@ public class DbMsClient implements MsClient {
 
     public void getUsers(MsgGetUsers message) {
         List<UserDataSet> users = null;
+        String usersJsonList = null;
         try {
             if (message.getUserId() != null) {
                 users = new ArrayList<>();
@@ -87,11 +88,11 @@ public class DbMsClient implements MsClient {
                 users.add(user);
             } else
                 users = dbService.load(UserDataSet.class);
+            Gson gson = new Gson();
+            usersJsonList = gson.toJson(users);
         } catch (Exception e) {
             logger.error(ExceptionUtils.getStackTrace(e));
         }
-        Gson gson = new Gson();
-        String usersJsonList = gson.toJson(users);
         MsgGetUsers answer = new MsgGetUsers(message, address, message.getFrom(), usersJsonList);
         sendMessage(answer);
     }

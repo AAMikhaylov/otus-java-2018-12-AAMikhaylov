@@ -8,53 +8,22 @@
     <groupId>ru.otus</groupId>
     <artifactId>l16</artifactId>
     <version>1.0</version>
-  <modules>
-    <module>messageSystem</module>
-    <module>dbService</module>
-    <module>frontend</module>
-  </modules>
+    <packaging>pom</packaging>
+    <modules>
+        <module>messageSystem</module>
+        <module>dbService</module>
+        <module>frontend</module>
+    </modules>
     <developers>
         <developer>
             <name>Aleksey Mikhaylov</name>
             <email>al.a.mikhaylov@gmail.com</email>
         </developer>
     </developers>
-
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
-    <!--build>
-        <finalName>${project.name}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>my-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>ru.otus.l16.messageSystem</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build-->
 </project>
 
